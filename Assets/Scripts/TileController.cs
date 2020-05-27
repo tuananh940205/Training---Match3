@@ -53,6 +53,7 @@ public class TileController : MonoBehaviour
         anim.SetBool("Animating", true);
         instance = GetComponent<TileController>();
         tempPosition = instance.transform.position;
+        tempPosition = transform.position;
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         for (int y = 0; y < GameController.instance.columnLength; y++)
         {
