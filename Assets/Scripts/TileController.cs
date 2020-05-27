@@ -53,7 +53,7 @@ public class TileController : MonoBehaviour
         anim.SetBool("Animating", true);
         instance = GetComponent<TileController>();
         tempPosition = instance.transform.position;
-        tempPosition = transform.position;
+
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         for (int y = 0; y < GameController.instance.columnLength; y++)
         {
@@ -76,6 +76,7 @@ public class TileController : MonoBehaviour
     // Bắt lastPosition, tính góc và xác định secondSelected
     void OnMouseUp()
     {
+
         tween.Complete();
         instance.anim.SetBool("Animating", false);
         instance.transform.position = tempPosition;
@@ -104,6 +105,7 @@ public class TileController : MonoBehaviour
             }
         }
     }
+    
 
     IEnumerator WaitForEndOfFrame()
     {

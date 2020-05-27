@@ -64,6 +64,7 @@ public class GameController : MonoBehaviour
     }
 
     void GetNewUpperTiles2()
+    
     {
         for (int y = 0; y < columnLength; y++)
         {
