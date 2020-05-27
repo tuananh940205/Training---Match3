@@ -67,11 +67,6 @@ public class BoardController : MonoBehaviour
         }
     }
 }
-
-    
-
-    
-
     //void GetNewUpperTiles()
     //{
     //    for (int x = 0; x < rowLength; x++)
@@ -236,7 +231,3 @@ public class BoardController : MonoBehaviour
     //     //StartCoroutine(FindingPassiveMatches(listGameObject));
     //     FindingPassiveMatches(listGameObject);
     // }
-
-    
-
-    

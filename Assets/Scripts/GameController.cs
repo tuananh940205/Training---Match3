@@ -424,7 +424,5 @@ public class GameController : MonoBehaviour
         GameController.instance.score = 0;
         GameController.instance.scoreText.text = "Score: " + GameController.instance.score.ToString();
     }
-
     
 }
-
