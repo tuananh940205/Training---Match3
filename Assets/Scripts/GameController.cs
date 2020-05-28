@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public static GameController instance;
+    
     [SerializeField] public Text scoreText;
     [SerializeField] public int score;
     Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();

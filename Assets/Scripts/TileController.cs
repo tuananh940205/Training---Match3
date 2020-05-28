@@ -6,15 +6,14 @@ using DG.Tweening;
 
 public class TileController : MonoBehaviour
 {
-    static TileController instance = null;
-    static TileController secondSelected = null;
+    // static TileController instance = null;
+    // static TileController secondSelected = null;
     public static TileController instance2;
     Vector2 firstPosition;
     Vector2 lastPosition;
     //test
     public bool fistPositionIsChecked;
     public bool secondPostionIsChecked;
-    Animator anim;
     Vector2 tempPosition;
     Tween tween;
 
@@ -25,7 +24,6 @@ public class TileController : MonoBehaviour
 
     private void Start()
     {
-        anim = GetComponent<Animator>();
         instance2 = GetComponent<TileController>();
         
     }
@@ -50,7 +48,6 @@ public class TileController : MonoBehaviour
     // Bắt instance vào tile khi nhấn chuột xuống
     void OnMouseDown()
     {
-        anim.SetBool("Animating", true);
         instance = GetComponent<TileController>();
         tempPosition = instance.transform.position;
 
@@ -78,7 +75,6 @@ public class TileController : MonoBehaviour
     {
 
         tween.Complete();
-        instance.anim.SetBool("Animating", false);
         instance.transform.position = tempPosition;
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if (Vector2.Distance(firstPosition, lastPosition) >= .5f)
