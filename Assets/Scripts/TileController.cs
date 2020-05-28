@@ -8,7 +8,9 @@ public class TileController : MonoBehaviour
 {
     // static TileController instance = null;
     // static TileController secondSelected = null;
-    public static TileController instance2;
+    public GameObject firstTile = null;
+    public GameObject secondTile = null;
+    // public static TileController instance2;
     Vector2 firstPosition;
     Vector2 lastPosition;
     //test
@@ -17,65 +19,34 @@ public class TileController : MonoBehaviour
     Vector2 tempPosition;
     Tween tween;
 
-    //private void OnEnable()
-    //{
-    //    GetComponent<Animator>().SetTrigger("Idle");
-    //}
-
-    private void Start()
-    {
-        instance2 = GetComponent<TileController>();
-        
-    }
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.K))
-        //{
-        //    StartCoroutine(OnTileSwapping(gameObject, Vector2.right));
-        //}
-        if (instance != null)
+        if (firstTile != null)
             fistPositionIsChecked = true;
         else
             fistPositionIsChecked = false;
 
-        if (secondSelected != null)
+        if (secondTile != null)
             secondPostionIsChecked = true;
         else
             secondPostionIsChecked = false;
     }
 
-    // Bắt instance vào tile khi nhấn chuột xuống
     void OnMouseDown()
     {
-        instance = GetComponent<TileController>();
-        tempPosition = instance.transform.position;
+        firstTile = this.gameObject;
+        tempPosition = firstTile.transform.position;
 
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        for (int y = 0; y < GameController.instance.columnLength; y++)
-        {
-            for (int x = 0; x < GameController.instance.rowLength; x++)
-            {
-                //if (BoardController.instance.tiles[x, y] == instance.gameObject)
-                    //Debug.LogFormat("Fount the first [{0}, {1}]", x, y);
-            }
-        }
         tween = transform.DOPath(new Vector3[] {transform.position, new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.position }, .8f);
         
-        //instance.transform.DOMove(new Vector2(transform.position.x, transform.position.y + 0.1f), 0.5f).OnComplete(DownOnTop);
     }
 
-    //void DownOnTop()
-    //{
-    //    instance.transform.DOMove(new Vector2(transform.position.x, transform.position.y - 0.1f), 0.5f);
-    //}
-
-    // Bắt lastPosition, tính góc và xác định secondSelected
     void OnMouseUp()
     {
-
         tween.Complete();
-        instance.transform.position = tempPosition;
+        firstTile.transform.position = tempPosition;
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if (Vector2.Distance(firstPosition, lastPosition) >= .5f)
         {
@@ -84,16 +55,13 @@ public class TileController : MonoBehaviour
             {
                 for (int x = 0; x < GameController.instance.rowLength; x++)
                 {
-                    if (GameController.instance.tiles[x, y] == instance.gameObject)
+                    if (GameController.instance.tiles[x, y] == firstTile)
                     {
-                        instance.transform.position = new Vector2(transform.position.x, GameController.instance.startPosition.y - GameController.instance.offset.y * y);
-                        StartCoroutine(WaitForEndOfFrame());
-                        //Debug.LogFormat("tiles selected tiles[{0}, {1}]", x, y);
+                        firstTile.transform.position = new Vector2(transform.position.x, GameController.instance.startPosition.y - GameController.instance.offset.y * y);
 
                         if (GetTheAdjacentTile(swipeAngle, x, y))
                         {
-                            //Debug.LogFormat("Execute if true; directionMoving = {0}, 1st = {1}, 2nd = {2}", directionMoving, instance.gameObject.name, secondSelected.gameObject.name);
-                            StartCoroutine(OnTileSwapping(instance.gameObject, secondSelected.gameObject));
+                            StartCoroutine(OnTileSwapping(firstTile, secondTile));
                         }
                         return;
                     }
@@ -101,13 +69,6 @@ public class TileController : MonoBehaviour
             }
         }
     }
-    
-
-    IEnumerator WaitForEndOfFrame()
-    {
-        yield return new WaitForSeconds(1);
-    }
-
     bool GetTheAdjacentTile(float radiant, int xIndex, int yIndex)
     {
         bool findTheAdjacent;
@@ -118,9 +79,9 @@ public class TileController : MonoBehaviour
             {
                 if (GameController.instance.tiles[xIndex + 1, yIndex] != null)
                 {
-                    secondSelected = GameController.instance.tiles[xIndex + 1, yIndex].GetComponent<TileController>();
+                    secondTile = GameController.instance.tiles[xIndex + 1, yIndex];
 
-                    Debug.LogFormat("tiles [{0}, {1}] is second Selected {2}", xIndex + 1, yIndex, secondSelected.gameObject.name);
+                    Debug.LogFormat("tiles [{0}, {1}] is second Selected {2}", xIndex + 1, yIndex, secondTile.name);
                 }
             }
         }
@@ -131,8 +92,7 @@ public class TileController : MonoBehaviour
             {
                 if (GameController.instance.tiles[xIndex, yIndex - 1] != null)
                 {
-                    secondSelected = GameController.instance.tiles[xIndex, yIndex - 1].GetComponent<TileController>();
-                    //Debug.LogFormat("tiles [{0}, {1}] is second Selected {2}", xIndex, yIndex - 1, secondSelected.gameObject.name);
+                    secondTile = GameController.instance.tiles[xIndex, yIndex - 1];
                 }
             }
         }
@@ -143,24 +103,21 @@ public class TileController : MonoBehaviour
             {
                 if (GameController.instance.tiles[xIndex - 1, yIndex] != null)
                 {
-                    secondSelected = GameController.instance.tiles[xIndex - 1, yIndex].GetComponent<TileController>();
-                    //Debug.LogFormat("tiles [{0}, {1}] is second Selected {2}", xIndex - 1, yIndex, secondSelected.gameObject.name);
+                    secondTile = GameController.instance.tiles[xIndex - 1, yIndex];
                 }
             }
         }
         else if (radiant > -135 && radiant < -45)
         {
-            //Debug.LogFormat("Down");
             if (yIndex < GameController.instance.columnLength - 1)
             {
                 if (GameController.instance.tiles[xIndex, yIndex + 1] != null)
                 {
-                    secondSelected = GameController.instance.tiles[xIndex, yIndex + 1].GetComponent<TileController>();
-                    //Debug.LogFormat("tiles [{0}, {1}] is second Selected {2}", xIndex, yIndex + 1, secondSelected.gameObject.name);
+                    secondTile = GameController.instance.tiles[xIndex, yIndex + 1];
                 }
             }
         }
-        if (secondSelected != null)
+        if (secondTile != null)
             findTheAdjacent = true;
         else
             findTheAdjacent = false;
@@ -272,8 +229,8 @@ public class TileController : MonoBehaviour
         }
         go1.transform.position = targetPosition1;
         go2.transform.position = targetPosition2;
-        instance = null;
-        secondSelected = null;
+        firstTile = null;
+        secondTile = null;
     }
 
     List<GameObject> FindingTheMatches(GameObject go1, GameObject go2)
@@ -370,36 +327,4 @@ public class TileController : MonoBehaviour
         return totalList;
     }
 
-    // TEMPORARiLY NOT USE
-    //IEnumerator TileFadeOut (GameObject go)
-    //{
-    //    for (int i = 10; i >= 0; i--)
-    //    {
-    //        //Debug.LogFormat("count = {0}", 1 - i / 5);
-    //        go.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i * .1f);
-    //        yield return new WaitForSeconds(.05f);
-    //    }
-    //    go.SetActive(false);
-    //    go.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
-
-    //    if (BoardController.instance.Number > 1)
-    //        BoardController.instance.Number--;
-    //    else
-    //        BoardController.instance.GetNewUpperTiles();
-    //}
-
-    //public IEnumerator AllTilesFadeOut(List<GameObject> tiles)
-    //{
-    //    for (int i = 10; i > 0; i--)
-    //    {
-    //        foreach (var tile in tiles)
-    //        {
-    //            tile.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i * .1f);
-    //        }
-    //        yield return new WaitForSeconds(.05f);
-    //    }
-    //    foreach (var tile in tiles)
-    //        tile.SetActive(false);
-    //    BoardController.instance.GetNewUpperTiles();
-    //}
 }

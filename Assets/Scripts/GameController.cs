@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public static GameController instance;
-    
+    public TileController obj;
     [SerializeField] public Text scoreText;
     [SerializeField] public int score;
     Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
@@ -14,12 +14,8 @@ public class GameController : MonoBehaviour
     [SerializeField] public GameObject tile;
     public int rowLength;
     public int columnLength;
-
     public GameObject[,] tiles;
-
     public List<Sprite> listSwapContainer = new List<Sprite>();
-
-    // public int indexX1, indexY1, indexX2, indexY2 = 0;
     public Vector2 offset;
     public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
 
@@ -137,10 +133,10 @@ public class GameController : MonoBehaviour
 
 
         DetectMatchExist(FindTheMatchExist());
-        if (TileController.instance2.FindMatchFromSwappingTiles(go, indexX, indexY).Contains(go))
+        if (secondTile.GetComponent<TileController>.FindMatchFromSwappingTiles(go, indexX, indexY).Contains(go))
         {
             //StopAllCoroutines();
-            StartCoroutine(instance.AllTilesFadeOut(TileController.instance2.FindMatchFromSwappingTiles(go, indexX, indexY)));
+            StartCoroutine(instance.AllTilesFadeOut(TileController.secondTile.FindMatchFromSwappingTiles(go, indexX, indexY)));
         }
     }
 
