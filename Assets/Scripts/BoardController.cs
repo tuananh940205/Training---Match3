@@ -8,12 +8,14 @@ public class BoardController : MonoBehaviour
     public int columnLength;
     public static BoardController instance;
     [SerializeField] public GameObject tile;
-    public GameObject[,] tiles;
+    public TileController[,] tiles;
     public List<Sprite> listSwapContainer = new List<Sprite>();
     public Vector2 offset;
     public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     public List<Sprite> characters = new List<Sprite>();
     Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
+
+    
 
     void Awake()
     {
@@ -36,7 +38,7 @@ public class BoardController : MonoBehaviour
 
     void CreateBoard(float xOffset, float yOffset)
     {
-        tiles = new GameObject[rowLength, columnLength];
+        tiles = new TileController[rowLength, columnLength];
 
         for (int y = 0; y < columnLength; y++)
         {
@@ -44,7 +46,7 @@ public class BoardController : MonoBehaviour
             {
                 GameObject newTile = Instantiate(tile, new Vector3(startPosition.x + (xOffset * x), startPosition.y - (yOffset * y), 0), tile.transform.rotation);
 
-                tiles[x, y] = newTile;
+                tiles[x, y] = newTile.GetComponent<TileController>();
                 newTile.name = "[ " + x + " , " + y + " ]";
                 tiles[x, y].transform.parent = transform;
 
@@ -77,9 +79,10 @@ public class BoardController : MonoBehaviour
         }
         go.transform.position = finalPosition;
 
-        DetectMatchExist(FindTheMatchExist());
+        List<GameObject> listmatch = GameController.instance.FindMatchesPassively(go, indexX, indexY, tiles);
+        GameController.instance.ClearAllPassiveMatches(listmatch, tiles);
 
-        
+        DetectMatchExist(FindTheMatchExist());
     }
 
     public List<GameObject> FindTheMatchExist()
@@ -201,7 +204,7 @@ public class BoardController : MonoBehaviour
 
 
 
-                    if (tiles[x, y + 1].GetComponent<SpriteRenderer>().sprite == tiles[x + 1, y].GetComponent<SpriteRenderer>().sprite &&
+                    if (tiles[x, y + 1].spriteRenderer == tiles[x + 1, y].GetComponent<SpriteRenderer>().sprite &&
                         tiles[x, y + 1].GetComponent<SpriteRenderer>().sprite == tiles[x + 2, y].GetComponent<SpriteRenderer>().sprite)
                     {
                         listCanBeMatch.Add(tiles[x, y + 1]);
@@ -273,15 +276,8 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    public void GetNewUpperTiles2()    
+    public void GetNewUpperTiles2()
     {
-        for (int y = 0; y < columnLength; y++)
-        {
-            for (int x = 0; x < rowLength; x++)
-            {
-                tiles[x, y].GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
-            }
-        }
         for (int x = 0; x < rowLength; x++)
         {
             //Debug.LogFormat("Execute GetNewUpperTiles2");
@@ -311,14 +307,13 @@ public class BoardController : MonoBehaviour
                 nullList[i].transform.position = new Vector2(nullList[i].transform.position.x, startPosition.y + (i + 1) * offset.y);
             }
             listTotal.AddRange(nullList);
-
-
-
+            
             for (int i = 0; i < listTotal.Count; i++)
             {
                 tiles[x, i] = listTotal[listTotal.Count - 1 - i];
                 tiles[x, i].name = "New [ " + x + ", " + i + " ]";
             }
+            
             for (int i = 0; i < listTotal.Count; i++)
             {
                 if (coroutineMap.ContainsKey(tiles[x, i].name))

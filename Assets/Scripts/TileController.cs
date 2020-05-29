@@ -8,6 +8,12 @@ public class TileController : MonoBehaviour
     //test
     // Vector2 tempPosition;
     Tween tween;
+    public SpriteRenderer spriteRenderer { get; private set;}
+
+    void Start() 
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
     void OnMouseDown()
     {
         GameController.instance.firstTile = this.gameObject;
@@ -23,6 +29,11 @@ public class TileController : MonoBehaviour
         // GameController.instance.firstTile.transform.position = tempPosition;
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         if (Vector2.Distance(firstPosition, lastPosition) >= .5f)
-            GameController.instance.FindAdjacentAndMatchIfPossible(firstPosition, lastPosition, BoardController.instance.tiles, BoardController.instance.offset, BoardController.instance.startPosition);
+            GameController.instance.FindAdjacentAndMatchIfPossible(
+                firstPosition,
+                lastPosition,
+                BoardController.instance.tiles,
+                BoardController.instance.offset,
+                BoardController.instance.startPosition);
     }
 }

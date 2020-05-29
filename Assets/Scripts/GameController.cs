@@ -12,7 +12,6 @@ public class GameController : MonoBehaviour
     public GameObject firstTile = null;
     public GameObject secondTile = null;
     
-    Sprite _sprite;
 
     void Awake()
     {
@@ -41,6 +40,7 @@ public class GameController : MonoBehaviour
         foreach (var tile in tiles)
         {
             tile.SetActive(false);
+            tile.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
             OnScoreChanged();
         }
 
@@ -54,7 +54,7 @@ public class GameController : MonoBehaviour
         scoreText.text = "Score: " + score.ToString();
     }
 
-    public void FindingPassiveMatches(List<GameObject> listGO, GameObject[,] tilesArray)
+    public void ClearAllPassiveMatches(List<GameObject> listGO, GameObject[,] tilesArray)
     {
         List<GameObject> passivelyClearTileList = new List<GameObject>();
         foreach(var go in listGO)
@@ -78,7 +78,7 @@ public class GameController : MonoBehaviour
             }
         }
         if (passivelyClearTileList.Count > 0)
-            StartCoroutine(GameController.instance.AllTilesFadeOut(passivelyClearTileList));
+            StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
     }
 
     public List<GameObject> FindMatchesPassively(GameObject go, int IndexX, int IndexY, GameObject[,] tilesArray)
@@ -193,7 +193,7 @@ public class GameController : MonoBehaviour
         return findTheAdjacent;
     }
 
-    public IEnumerator OnTileSwapping(GameObject go1, GameObject go2, GameObject[,] tilesArray)
+    public IEnumerator OnTileSwapping(GameObject go1, GameObject go2, TileController[,] tilesArray)
     {
         // Debug.LogFormat("Swapping");
         int temp1 = -1, temp2 = -1, temp3 = -1, temp4 = -1;
@@ -384,14 +384,14 @@ public class GameController : MonoBehaviour
         return totalList;
     }
 
-    public void FindAdjacentAndMatchIfPossible(Vector2 position1, Vector2 position2, GameObject[,] tilesArray, Vector2 offsetPosition, Vector2 startPosition)
+    public void FindAdjacentAndMatchIfPossible(Vector2 position1, Vector2 position2, TileController[,] tilesArray, Vector2 offsetPosition, Vector2 startPosition)
     {
         float swipeAngle = Mathf.Atan2(position2.y - position1.y, position2.x - position1.x) * 180 / Mathf.PI;            
         for (int y = 0; y < tilesArray.GetLength(1); y++)
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (tilesArray[x, y] == firstTile)
+                if (tilesArray[x, y] == firstTile.)
                 {
 
                     if (GetTheAdjacentTile(swipeAngle, x, y))
