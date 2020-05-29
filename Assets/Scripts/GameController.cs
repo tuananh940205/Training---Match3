@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    public static GameController instance;
+    public static GameController instance {get; set;}
     public TileController obj;
     [SerializeField] public Text scoreText;
     [SerializeField] public int score;
@@ -147,7 +147,7 @@ public class GameController : MonoBehaviour
         scoreText.text = "Score: " + score.ToString();
     }
 
-    public bool GetTheAdjacentTile(float radiant, int xIndex, int yIndex)
+    public bool GetTheAdjacentTile(float radiant, int xIndex, int yIndex, TileController[,] tilesArray)
     {
         bool findTheAdjacent;
         if (radiant > -45 && radiant < 45)
@@ -156,7 +156,7 @@ public class GameController : MonoBehaviour
             if (xIndex < BoardController.instance.rowLength - 1)
             {
                 if (BoardController.instance.tiles[xIndex + 1, yIndex] != null)
-                    secondTile = BoardController.instance.tiles[xIndex + 1, yIndex];
+                    secondTile = tilesArray[xIndex + 1, yIndex];
             }
         }
         else if (radiant > 45 && radiant < 135)
@@ -165,7 +165,7 @@ public class GameController : MonoBehaviour
             if (yIndex > 0)
             {
                 if (BoardController.instance.tiles[xIndex, yIndex - 1] != null)
-                    secondTile = BoardController.instance.tiles[xIndex, yIndex - 1];
+                    secondTile = tilesArray[xIndex, yIndex - 1];
             }
         }
         else if (radiant > 135 || radiant < -135)
@@ -174,7 +174,7 @@ public class GameController : MonoBehaviour
             if (xIndex > 0)
             {
                 if (BoardController.instance.tiles[xIndex - 1, yIndex] != null)
-                    secondTile = BoardController.instance.tiles[xIndex - 1, yIndex];
+                    secondTile = tilesArray[xIndex - 1, yIndex];
             }
         }
         else if (radiant > -135 && radiant < -45)
@@ -182,7 +182,7 @@ public class GameController : MonoBehaviour
             if (yIndex < BoardController.instance.columnLength - 1)
             {
                 if (BoardController.instance.tiles[xIndex, yIndex + 1] != null)
-                    secondTile = BoardController.instance.tiles[xIndex, yIndex + 1];
+                    secondTile = tilesArray[xIndex, yIndex + 1];
             }
         }
         if (secondTile != null)
@@ -391,7 +391,7 @@ public class GameController : MonoBehaviour
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (tilesArray[x, y] == firstTile.)
+                if (tilesArray[x, y] == firstTile)
                 {
 
                     if (GetTheAdjacentTile(swipeAngle, x, y))

@@ -15,8 +15,6 @@ public class BoardController : MonoBehaviour
     public List<Sprite> characters = new List<Sprite>();
     Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
 
-    
-
     void Awake()
     {
         if (instance != null)
