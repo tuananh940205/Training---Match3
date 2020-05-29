@@ -8,7 +8,6 @@ public class BoardController : MonoBehaviour
     public int columnLength;
     public static BoardController instance;
     [SerializeField] public GameObject tile;
-    
     public GameObject[,] tiles;
     public List<Sprite> listSwapContainer = new List<Sprite>();
     public Vector2 offset;
@@ -35,10 +34,6 @@ public class BoardController : MonoBehaviour
         DetectMatchExist(FindTheMatchExist());
     }
 
-    void Update()
-    {
-        
-    }
     void CreateBoard(float xOffset, float yOffset)
     {
         tiles = new GameObject[rowLength, columnLength];
@@ -82,14 +77,9 @@ public class BoardController : MonoBehaviour
         }
         go.transform.position = finalPosition;
 
-
         DetectMatchExist(FindTheMatchExist());
 
-        // if (go.GetComponent<TileController>.FindMatchFromSwappingTiles(go, indexX, indexY).Contains(go))
-        // {
-        //     StartCoroutine(instance.AllTilesFadeOut(TileController.secondTile.FindMatchFromSwappingTiles(go, indexX, indexY)));
-        // }
-
+        
     }
 
     public List<GameObject> FindTheMatchExist()
@@ -253,9 +243,11 @@ public class BoardController : MonoBehaviour
     {
         if (listGO.Count > 0)
         {
-            Debug.LogFormat("We found the Match!");
+            // Debug.LogFormat("We found the Match!");
             foreach (var go in listGO)
                 go.GetComponent<SpriteRenderer>().color = new Color(.5f, .5f, .5f, 1);
+
+            
         }
         else
         {
