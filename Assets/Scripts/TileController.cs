@@ -3,9 +3,9 @@ using DG.Tweening;
 
 public class TileController : MonoBehaviour
 {
-    Vector2 firstPosition;
-    Vector2 lastPosition;
-    Tween tween;
+    private Vector2 firstPosition;
+    private Vector2 lastPosition;
+    private Tween tween;
     public SpriteRenderer SpriteRenderer { get; private set; }
 
     void Awake()
@@ -29,10 +29,7 @@ public class TileController : MonoBehaviour
     {
         tween.Complete();
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if (Vector2.Distance(firstPosition, lastPosition) >= .5f)
-            GameController.Instance.FindAdjacentAndMatchIfPossible(
-                firstPosition,
-                lastPosition,
-                BoardController.Instance.tiles);
+
+        GameController.Instance.CheckAdjacent(firstPosition, lastPosition);
     }
 }

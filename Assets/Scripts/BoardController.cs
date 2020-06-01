@@ -295,9 +295,7 @@ public class BoardController : MonoBehaviour
             for (int x = 0; x < rowLength; x++)
             {
                 if (tiles[x, y].SpriteRenderer.color != new Color (1, 1, 1, 1))
-                {
                     tiles[x, y].SpriteRenderer.color = new Color (1, 1, 1, 1);
-                }
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class GameController : MonoBehaviour
 {
@@ -198,62 +199,66 @@ public class GameController : MonoBehaviour
         return findTheAdjacent;
     }
 
-    public IEnumerator OnTileSwapping(GameObject go1, GameObject go2, TileController[,] tilesArray)
+    void OnTileSwapping(TileController go1, TileController go2, TileController[,] tilesArray)
     {
         // Debug.LogFormat("Swapping");
         int temp1 = -1, temp2 = -1, temp3 = -1, temp4 = -1;
         for (int y = 0; y < tilesArray.GetLength(1); y++)
         {
-            
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (tilesArray[x, y].gameObject == go1)
+                if (tilesArray[x, y] == go1)
                 {
                     temp1 = x;
                     temp2 = y;
                 }
-                if (tilesArray[x, y].gameObject == go2)
+                if (tilesArray[x, y] == go2)
                 {
                     temp3 = x;
                     temp4 = y;
                 }
                 if (temp1 > -1 && temp2 > -1 && temp3 > -1 && temp4 > -1)
                 {
-                    tilesArray[temp1, temp2] = go2.GetComponent<TileController>();
+                    tilesArray[temp1, temp2] = go2;
                     tilesArray[temp1, temp2].gameObject.name = "Swap [ " + temp1 + ", " + temp2 + " ]";
-                    tilesArray[temp3, temp4] = go1.GetComponent<TileController>();
+                    tilesArray[temp3, temp4] = go1;
                     tilesArray[temp3, temp4].gameObject.name = "Swap [ " + temp3 + ", " + temp4 + " ]";
                     break;
                 }
             }
         }
-        Vector2 targetPosition1 = go2.transform.position;
-        Vector2 targetPosition2 = go1.transform.position;
+        Vector2 targetPosition1 = go2.gameObject.transform.position;
+        Vector2 targetPosition2 = go1.gameObject.transform.position;
 
-        for (int i = 0; i < 5; i++)
-        {
-            Vector2 currentPosition1 = go1.transform.position;
-            Vector2 currentPosition2 = go2.transform.position;
-            currentPosition1 += new Vector2((targetPosition1.x - go1.transform.position.x) / 5, (targetPosition1.y - go1.transform.position.y) / 5);
-            currentPosition2 += new Vector2((targetPosition2.x - go2.transform.position.x) / 5, (targetPosition2.y - go2.transform.position.y) / 5);
-
-            go1.transform.position = currentPosition1;
-            go2.transform.position = currentPosition2;
-            yield return new WaitForSeconds(.02f);
-        }
-        go1.transform.position = targetPosition1;
-        go2.transform.position = targetPosition2;
-        // if swap success failed
-
-        List<GameObject> listGameObject = FindingTheMatches(go1, go2, BoardController.Instance.tiles);
-
-        if (listGameObject.Contains(go1) || listGameObject.Contains(go2))
-            StartCoroutine(AllTilesFadeOut(listGameObject));
-        else
-            StartCoroutine(TileSwapBackOnMatchFailure(go1, go2, BoardController.Instance.tiles));
+        StartCoroutine(SwappingTiles(go1, go2, targetPosition1, targetPosition2));
     }
 
-    IEnumerator TileSwapBackOnMatchFailure(GameObject go1, GameObject go2, TileController[,] tilesArray)
+    IEnumerator SwappingTiles(TileController tile1, TileController tile2, Vector2 targetPosition1, Vector2 targetPosition2)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            Vector2 currentPosition1 = tile1.gameObject.transform.position;
+            Vector2 currentPosition2 = tile2.gameObject.transform.position;
+            currentPosition1 += new Vector2((targetPosition1.x - tile1.gameObject.transform.position.x) / 5, (targetPosition1.y - tile1.gameObject.transform.position.y) / 5);
+            currentPosition2 += new Vector2((targetPosition2.x - tile2.gameObject.transform.position.x) / 5, (targetPosition2.y - tile2.gameObject.transform.position.y) / 5);
+
+            tile1.transform.position = currentPosition1;
+            tile2.transform.position = currentPosition2;
+            yield return new WaitForSeconds(.02f);
+        }
+        tile1.transform.position = targetPosition1;
+        tile2.transform.position = targetPosition2;
+        // if swap success failed
+
+        List<GameObject> listGameObject = FindingTheMatches(tile1.gameObject, tile2.gameObject, BoardController.Instance.tiles);
+
+        if (listGameObject.Contains(tile1.gameObject) || listGameObject.Contains(tile2.gameObject))
+            StartCoroutine(AllTilesFadeOut(listGameObject));
+        else
+            StartCoroutine(TileSwapBackOnMatchFailure(tile1, tile2, BoardController.Instance.tiles));
+    }
+
+    IEnumerator TileSwapBackOnMatchFailure(TileController tile1, TileController tile2, TileController[,] tilesArray)
     {
         // Debug.LogFormat("Swap failed");
         int temp1 = -1, temp2 = -1, temp3 = -1, temp4 = -1;
@@ -261,43 +266,43 @@ public class GameController : MonoBehaviour
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (tilesArray[x, y] == go1.GetComponent<TileController>())
+                if (tilesArray[x, y] == tile1)
                 {
                     temp1 = x;
                     temp2 = y;
                 }
-                if (tilesArray[x, y] == go2.GetComponent<TileController>())
+                if (tilesArray[x, y] == tile2)
                 {
                     temp3 = x;
                     temp4 = y;
                 }
                 if (temp1 > -1 && temp2 > -1 && temp3 > -1 && temp4 > -1)
                 {
-                    tilesArray[temp1, temp2] = go2.GetComponent<TileController>();
+                    tilesArray[temp1, temp2] = tile2;
                     tilesArray[temp1, temp2].gameObject.name = "SwapBack [ " + temp1 + ", " + temp2 + " ]";
-                    tilesArray[temp3, temp4] = go1.GetComponent<TileController>();
+                    tilesArray[temp3, temp4] = tile1;
                     tilesArray[temp3, temp4].gameObject.name = "SwapBack [ " + temp3 + ", " + temp4 + " ]";
 
                     break;
                 }
             }
         }
-        Vector2 targetPosition1 = go2.transform.position;
-        Vector2 targetPosition2 = go1.transform.position;
+        Vector2 targetPosition1 = tile2.gameObject.transform.position;
+        Vector2 targetPosition2 = tile1.gameObject.transform.position;
 
         for (int i = 0; i < 5; i++)
         {
-            Vector2 currentPosition1 = go1.transform.position;
-            Vector2 currentPosition2 = go2.transform.position;
-            currentPosition1 += new Vector2((targetPosition1.x - go1.transform.position.x) / 5, (targetPosition1.y - go1.transform.position.y) / 5);
-            currentPosition2 += new Vector2((targetPosition2.x - go2.transform.position.x) / 5, (targetPosition2.y - go2.transform.position.y) / 5);
+            Vector2 currentPosition1 = tile1.gameObject.transform.position;
+            Vector2 currentPosition2 = tile2.gameObject.transform.position;
+            currentPosition1 += new Vector2((targetPosition1.x - tile1.gameObject.transform.position.x) / 5, (targetPosition1.y - tile1.gameObject.transform.position.y) / 5);
+            currentPosition2 += new Vector2((targetPosition2.x - tile2.gameObject.transform.position.x) / 5, (targetPosition2.y - tile2.gameObject.transform.position.y) / 5);
 
-            go1.transform.position = currentPosition1;
-            go2.transform.position = currentPosition2;
+            tile1.gameObject.transform.position = currentPosition1;
+            tile2.gameObject.transform.position = currentPosition2;
             yield return new WaitForSeconds(.02f);
         }
-        go1.transform.position = targetPosition1;
-        go2.transform.position = targetPosition2;
+        tile1.gameObject.transform.position = targetPosition1;
+        tile2.gameObject.transform.position = targetPosition2;
 
         firstTile = null;
         secondTile = null;
@@ -325,8 +330,8 @@ public class GameController : MonoBehaviour
             }
         }
 
-        List<GameObject> list1 = FindMatchFromSwappingTiles(go1, x1, y1, BoardController.Instance.tiles);
-        List<GameObject> list2 = FindMatchFromSwappingTiles(go2, x2, y2, BoardController.Instance.tiles);
+        List<GameObject> list1 = FindMatchFromSwappingTiles(go1.gameObject, x1, y1, BoardController.Instance.tiles);
+        List<GameObject> list2 = FindMatchFromSwappingTiles(go2.gameObject, x2, y2, BoardController.Instance.tiles);
 
         clearMatchList.AddRange(list1);
         clearMatchList.AddRange(list2);
@@ -400,11 +405,22 @@ public class GameController : MonoBehaviour
                 if (tilesArray[x, y].gameObject == firstTile)
                 {
                     if (GetTheAdjacentTile(swipeAngle, x, y, BoardController.Instance.tiles))
-                        StartCoroutine(OnTileSwapping(firstTile, secondTile, BoardController.Instance.tiles));
+                        OnTileSwapping(firstTile.GetComponent<TileController>(), secondTile.GetComponent<TileController>(), BoardController.Instance.tiles);
 
                     return;
                 }
             }
+        }
+    }
+
+    public void CheckAdjacent(Vector2 firstPosition, Vector2 lastPosition)
+    {
+        if (Vector2.Distance(firstPosition, lastPosition) >= 0.5f)
+        {
+            FindAdjacentAndMatchIfPossible(
+                firstPosition,
+                lastPosition,
+                BoardController.Instance.tiles);
         }
     }
 }
