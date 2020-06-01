@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public int score;
     public GameObject firstTile = null;
     public GameObject secondTile = null;
+    public Tween swapAnim;
     
 
     void Awake()
@@ -231,8 +232,8 @@ public class GameController : MonoBehaviour
         Vector2 targetPosition2 = go1.gameObject.transform.position;
 
         // StartCoroutine(SwappingTiles(go1, go2, targetPosition1, targetPosition2));
-        go1.transform.DOMove(targetPosition1, 0.5f);
-        go2.transform.DOMove(targetPosition2, 0.5f);
+        go1.transform.DOMove(targetPosition1, 0.35f).OnComplete(FindMatchesPassively());
+        go2.transform.DOMove(targetPosition2, 0.35f);
     }   
 
     IEnumerator SwappingTiles(TileController tile1, TileController tile2, Vector2 targetPosition1, Vector2 targetPosition2)

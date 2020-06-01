@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TestFive : MonoBehaviour
 {
@@ -10,11 +8,6 @@ public class TestFive : MonoBehaviour
     void Start()
     {
         CreateTheBoard();
-    }
-
-    void Update()
-    {
-        
     }
 
     void CreateTheBoard()
