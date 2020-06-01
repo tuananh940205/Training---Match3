@@ -230,8 +230,10 @@ public class GameController : MonoBehaviour
         Vector2 targetPosition1 = go2.gameObject.transform.position;
         Vector2 targetPosition2 = go1.gameObject.transform.position;
 
-        StartCoroutine(SwappingTiles(go1, go2, targetPosition1, targetPosition2));
-    }
+        // StartCoroutine(SwappingTiles(go1, go2, targetPosition1, targetPosition2));
+        go1.transform.DOMove(targetPosition1, 0.5f);
+        go2.transform.DOMove(targetPosition2, 0.5f);
+    }   
 
     IEnumerator SwappingTiles(TileController tile1, TileController tile2, Vector2 targetPosition1, Vector2 targetPosition2)
     {
