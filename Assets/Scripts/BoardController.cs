@@ -309,7 +309,6 @@ public class BoardController : MonoBehaviour
             for (int i = 0; i < nullList.Count; i++)
             {
                 nullList[i].GetComponent<SpriteRenderer>().sprite = characters[Random.Range(0, characters.Count)];
-                nullList[i].GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
                 nullList[i].transform.position = new Vector2(nullList[i].transform.position.x, startPosition.y + (i + 1) * offset.y);
             }
             listTotal.AddRange(nullList);

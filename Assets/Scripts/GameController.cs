@@ -82,6 +82,7 @@ public class GameController : MonoBehaviour
 
     public List<GameObject> FindMatchesPassively(GameObject go, int IndexX, int IndexY, TileController[,] tilesArray)
     {
+        Debug.LogFormat("Execute FindMatchPassiveLy");
         List<GameObject> checkingMatchListVertical = new List<GameObject>();
         List<GameObject> checkingMatchListHorizontal = new List<GameObject>();
         List<GameObject> totalList = new List<GameObject>();
@@ -255,15 +256,6 @@ public class GameController : MonoBehaviour
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (temp1 > -1 && temp2 > -1 && temp3 > -1 && temp4 > -1)
-                {
-                    tilesArray[temp1, temp2] = go2.GetComponent<TileController>();
-                    tilesArray[temp1, temp2].gameObject.name = "SwapBack [ " + temp1 + ", " + temp2 + " ]";
-                    tilesArray[temp3, temp4] = go1.GetComponent<TileController>();
-                    tilesArray[temp3, temp4].gameObject.name = "SwapBack [ " + temp3 + ", " + temp4 + " ]";
-
-                    break;
-                }
                 if (tilesArray[x, y] == go1.GetComponent<TileController>())
                 {
                     temp1 = x;
@@ -273,6 +265,15 @@ public class GameController : MonoBehaviour
                 {
                     temp3 = x;
                     temp4 = y;
+                }
+                if (temp1 > -1 && temp2 > -1 && temp3 > -1 && temp4 > -1)
+                {
+                    tilesArray[temp1, temp2] = go2.GetComponent<TileController>();
+                    tilesArray[temp1, temp2].gameObject.name = "SwapBack [ " + temp1 + ", " + temp2 + " ]";
+                    tilesArray[temp3, temp4] = go1.GetComponent<TileController>();
+                    tilesArray[temp3, temp4].gameObject.name = "SwapBack [ " + temp3 + ", " + temp4 + " ]";
+
+                    break;
                 }
             }
         }
