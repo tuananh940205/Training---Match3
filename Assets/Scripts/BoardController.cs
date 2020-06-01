@@ -105,7 +105,6 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x, y].gameObject);
                         listCanBeMatch.Add(tiles[x, y + 2].gameObject);
                         listCanBeMatch.Add(tiles[x, y + 3].gameObject);
-                        Debug.LogFormat("XOXX");
                     }
 
                     if (tiles[x, y].SpriteRenderer.sprite == tiles[x, y + 1].SpriteRenderer.sprite &&
@@ -255,18 +254,16 @@ public class BoardController : MonoBehaviour
             // Debug.LogFormat("We found the Match!");
             foreach (var go in listGO)
                 go.GetComponent<SpriteRenderer>().color = new Color(.5f, .5f, .5f, 1);
-
-            
         }
         else
         {
             Debug.LogFormat("Match 404 not found. Reset the board");
-
+            
             for (int y = 0; y < columnLength; y++)
             {
                 for (int x = 0; x < rowLength; x++)
                 {
-                    listSwapContainer.Add(tiles[x, y].GetComponent<SpriteRenderer>().sprite);
+                    listSwapContainer.Add(tiles[x, y].SpriteRenderer.sprite);
                 }
             }
 
@@ -275,8 +272,17 @@ public class BoardController : MonoBehaviour
                 for (int x = 0; x < rowLength; x++)
                 {
                     Sprite go = listSwapContainer[Random.Range(0, listSwapContainer.Count)];
-                    tiles[x, y].GetComponent<SpriteRenderer>().sprite = go;
+                    tiles[x, y].SpriteRenderer.sprite = go;
                     listSwapContainer.Remove(go);
+                }
+            }
+
+            for (int y = 0; y < columnLength; y++)
+            {
+                for (int x = 0; x < rowLength; x++)
+                {
+                    List<GameObject> listMatch = GameController.Instance.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
+                    GameController.Instance.ClearAllPassiveMatches(listMatch, tiles);
                 }
             }
         }
@@ -284,6 +290,17 @@ public class BoardController : MonoBehaviour
 
     public void GetNewUpperTiles2()
     {
+        for (int y = 0; y < columnLength; y++)
+        {
+            for (int x = 0; x < rowLength; x++)
+            {
+                if (tiles[x, y].SpriteRenderer.color != new Color (1, 1, 1, 1))
+                {
+                    tiles[x, y].SpriteRenderer.color = new Color (1, 1, 1, 1);
+                }
+            }
+        }
+
         for (int x = 0; x < rowLength; x++)
         {
             //Debug.LogFormat("Execute GetNewUpperTiles2");
