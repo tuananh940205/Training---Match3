@@ -91,6 +91,7 @@ public class BoardController : MonoBehaviour
 
     public List<GameObject> FindTheMatchExist()
     {
+        // Debug.LogFormat("Execute Find the match exist");
         List<GameObject> listCanBeMatch = new List<GameObject>();
         for (int y = 0; y < columnLength; y++)
         {

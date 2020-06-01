@@ -8,7 +8,7 @@ public class TileController : MonoBehaviour
     Tween tween;
     public SpriteRenderer SpriteRenderer { get; private set; }
 
-    void Start() 
+    void Awake()
     {
         SpriteRenderer = GetComponent<SpriteRenderer>();
     }
