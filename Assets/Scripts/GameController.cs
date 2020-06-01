@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    public static GameController instance {get; set;}
-    public TileController obj;
+    public static GameController Instance;
     [SerializeField] public Text scoreText;
     [SerializeField] public int score;
     public GameObject firstTile = null;
@@ -15,12 +14,12 @@ public class GameController : MonoBehaviour
 
     void Awake()
     {
-        if (instance != null)
+        if (Instance != null)
         {
             Destroy(this.gameObject);
             return;
         }
-        instance = GetComponent<GameController>();
+        Instance = GetComponent<GameController>();
     }
 
     void Start ()
@@ -44,7 +43,7 @@ public class GameController : MonoBehaviour
             OnScoreChanged();
         }
 
-        BoardController.instance.GetNewUpperTiles2();
+        BoardController.Instance.GetNewUpperTiles2();
     }
     
 
@@ -54,7 +53,7 @@ public class GameController : MonoBehaviour
         scoreText.text = "Score: " + score.ToString();
     }
 
-    public void ClearAllPassiveMatches(List<GameObject> listGO, GameObject[,] tilesArray)
+    public void ClearAllPassiveMatches(List<GameObject> listGO, TileController[,] tilesArray)
     {
         List<GameObject> passivelyClearTileList = new List<GameObject>();
         foreach(var go in listGO)
@@ -65,9 +64,9 @@ public class GameController : MonoBehaviour
                 {
                     if (tilesArray[x, y] == go)
                     {
-                        if (!passivelyClearTileList.Contains(tilesArray[x, y]))
+                        if (!passivelyClearTileList.Contains(tilesArray[x, y].gameObject))
                         {
-                            foreach(var tile in FindMatchesPassively(tilesArray[x, y], x, y, tilesArray))
+                            foreach(var tile in FindMatchesPassively(tilesArray[x, y].gameObject, x, y, tilesArray))
                             {
                                 if (!passivelyClearTileList.Contains(tile))
                                     passivelyClearTileList.Add(tile);
@@ -81,7 +80,7 @@ public class GameController : MonoBehaviour
             StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
     }
 
-    public List<GameObject> FindMatchesPassively(GameObject go, int IndexX, int IndexY, GameObject[,] tilesArray)
+    public List<GameObject> FindMatchesPassively(GameObject go, int IndexX, int IndexY, TileController[,] tilesArray)
     {
         List<GameObject> checkingMatchListVertical = new List<GameObject>();
         List<GameObject> checkingMatchListHorizontal = new List<GameObject>();
@@ -92,7 +91,7 @@ public class GameController : MonoBehaviour
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX, IndexY - i].GetComponent<SpriteRenderer>().sprite)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY - i].name, IndexX, IndexY - 1);
-                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY - i]);
+                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY - i].gameObject);
             }
             else
                 break;
@@ -103,7 +102,7 @@ public class GameController : MonoBehaviour
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX, IndexY + i].GetComponent<SpriteRenderer>().sprite)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY + i].name, IndexX, IndexY + 1);
-                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY + i]);
+                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY + i].gameObject);
             }
             else
                 break;
@@ -116,7 +115,7 @@ public class GameController : MonoBehaviour
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX - i, IndexY].GetComponent<SpriteRenderer>().sprite)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX - i, IndexY].name, IndexX - i, IndexY);
-                checkingMatchListHorizontal.Add(tilesArray[IndexX - i, IndexY]);
+                checkingMatchListHorizontal.Add(tilesArray[IndexX - i, IndexY].gameObject);
             }
             else
                 break;
@@ -127,7 +126,7 @@ public class GameController : MonoBehaviour
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX + i, IndexY].GetComponent<SpriteRenderer>().sprite)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", BoardController.instance.tiles[IndexX + i, IndexY].name, IndexX + i, IndexY);
-                checkingMatchListHorizontal.Add(tilesArray[IndexX + i, IndexY]);
+                checkingMatchListHorizontal.Add(tilesArray[IndexX + i, IndexY].gameObject);
             }
             else
                 break;
@@ -153,10 +152,10 @@ public class GameController : MonoBehaviour
         if (radiant > -45 && radiant < 45)
         {
             //Debug.LogFormat("Right");
-            if (xIndex < BoardController.instance.rowLength - 1)
+            if (xIndex < tilesArray.GetLength(0) - 1)
             {
-                if (BoardController.instance.tiles[xIndex + 1, yIndex] != null)
-                    secondTile = tilesArray[xIndex + 1, yIndex];
+                if (BoardController.Instance.tiles[xIndex + 1, yIndex] != null)
+                    secondTile = tilesArray[xIndex + 1, yIndex].gameObject;
             }
         }
         else if (radiant > 45 && radiant < 135)
@@ -164,8 +163,8 @@ public class GameController : MonoBehaviour
             //Debug.LogFormat("Up");
             if (yIndex > 0)
             {
-                if (BoardController.instance.tiles[xIndex, yIndex - 1] != null)
-                    secondTile = tilesArray[xIndex, yIndex - 1];
+                if (tilesArray[xIndex, yIndex - 1] != null)
+                    secondTile = tilesArray[xIndex, yIndex - 1].gameObject;
             }
         }
         else if (radiant > 135 || radiant < -135)
@@ -173,16 +172,16 @@ public class GameController : MonoBehaviour
             //Debug.LogFormat("Left");
             if (xIndex > 0)
             {
-                if (BoardController.instance.tiles[xIndex - 1, yIndex] != null)
-                    secondTile = tilesArray[xIndex - 1, yIndex];
+                if (tilesArray[xIndex - 1, yIndex] != null)
+                    secondTile = tilesArray[xIndex - 1, yIndex].gameObject;
             }
         }
         else if (radiant > -135 && radiant < -45)
         {
-            if (yIndex < BoardController.instance.columnLength - 1)
+            if (yIndex < tilesArray.GetLength(0) - 1)
             {
-                if (BoardController.instance.tiles[xIndex, yIndex + 1] != null)
-                    secondTile = tilesArray[xIndex, yIndex + 1];
+                if (tilesArray[xIndex, yIndex + 1] != null)
+                    secondTile = tilesArray[xIndex, yIndex + 1].gameObject;
             }
         }
         if (secondTile != null)
@@ -202,22 +201,22 @@ public class GameController : MonoBehaviour
             
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (tilesArray[x, y] == go1)
+                if (tilesArray[x, y].gameObject == go1)
                 {
                     temp1 = x;
                     temp2 = y;
                 }
-                if (tilesArray[x, y] == go2)
+                if (tilesArray[x, y].gameObject == go2)
                 {
                     temp3 = x;
                     temp4 = y;
                 }
                 if (temp1 > -1 && temp2 > -1 && temp3 > -1 && temp4 > -1)
                 {
-                    tilesArray[temp1, temp2] = go2;
-                    tilesArray[temp1, temp2].name = "Swap [ " + temp1 + ", " + temp2 + " ]";
-                    tilesArray[temp3, temp4] = go1;
-                    tilesArray[temp3, temp4].name = "Swap [ " + temp3 + ", " + temp4 + " ]";
+                    tilesArray[temp1, temp2] = go2.GetComponent<TileController>();
+                    tilesArray[temp1, temp2].gameObject.name = "Swap [ " + temp1 + ", " + temp2 + " ]";
+                    tilesArray[temp3, temp4] = go1.GetComponent<TileController>();
+                    tilesArray[temp3, temp4].gameObject.name = "Swap [ " + temp3 + ", " + temp4 + " ]";
                     break;
                 }
             }
@@ -240,37 +239,37 @@ public class GameController : MonoBehaviour
         go2.transform.position = targetPosition2;
         // if swap success failed
 
-        List<GameObject> listGameObject = FindingTheMatches(go1, go2, BoardController.instance.tiles);
+        List<GameObject> listGameObject = FindingTheMatches(go1, go2, BoardController.Instance.tiles);
 
         if (listGameObject.Contains(go1) || listGameObject.Contains(go2))
             StartCoroutine(AllTilesFadeOut(listGameObject));
         else
-            StartCoroutine(TileSwapBackOnMatchFailure(go1, go2));
+            StartCoroutine(TileSwapBackOnMatchFailure(go1, go2, BoardController.Instance.tiles));
     }
 
-    IEnumerator TileSwapBackOnMatchFailure(GameObject go1, GameObject go2)
+    IEnumerator TileSwapBackOnMatchFailure(GameObject go1, GameObject go2, TileController[,] tilesArray)
     {
         // Debug.LogFormat("Swap failed");
         int temp1 = -1, temp2 = -1, temp3 = -1, temp4 = -1;
-        for (int y = 0; y < BoardController.instance.columnLength; y++)
+        for (int y = 0; y < tilesArray.GetLength(1); y++)
         {
-            for (int x = 0; x < BoardController.instance.rowLength; x++)
+            for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
                 if (temp1 > -1 && temp2 > -1 && temp3 > -1 && temp4 > -1)
                 {
-                    BoardController.instance.tiles[temp1, temp2] = go2;
-                    BoardController.instance.tiles[temp1, temp2].name = "SwapBack [ " + temp1 + ", " + temp2 + " ]";
-                    BoardController.instance.tiles[temp3, temp4] = go1;
-                    BoardController.instance.tiles[temp3, temp4].name = "SwapBack [ " + temp3 + ", " + temp4 + " ]";
+                    tilesArray[temp1, temp2] = go2.GetComponent<TileController>();
+                    tilesArray[temp1, temp2].gameObject.name = "SwapBack [ " + temp1 + ", " + temp2 + " ]";
+                    tilesArray[temp3, temp4] = go1.GetComponent<TileController>();
+                    tilesArray[temp3, temp4].gameObject.name = "SwapBack [ " + temp3 + ", " + temp4 + " ]";
 
                     break;
                 }
-                if (BoardController.instance.tiles[x, y] == go1)
+                if (tilesArray[x, y] == go1.GetComponent<TileController>())
                 {
                     temp1 = x;
                     temp2 = y;
                 }
-                if (BoardController.instance.tiles[x, y] == go2)
+                if (tilesArray[x, y] == go2.GetComponent<TileController>())
                 {
                     temp3 = x;
                     temp4 = y;
@@ -297,21 +296,21 @@ public class GameController : MonoBehaviour
         go2 = null;
     }
 
-    public List<GameObject> FindingTheMatches(GameObject go1, GameObject go2, GameObject[,] tilesArray)
+    public List<GameObject> FindingTheMatches(GameObject go1, GameObject go2, TileController[,] tilesArray)
     {
         List<GameObject> clearMatchList = new List<GameObject>();
 
         int x1 = -1, y1 = -1, x2 = -1, y2 = -1;
-        for(int y = 0; y < BoardController.instance.columnLength; y++)
+        for(int y = 0; y < BoardController.Instance.columnLength; y++)
         {
-            for (int x = 0; x < BoardController.instance.rowLength; x++)
+            for (int x = 0; x < BoardController.Instance.rowLength; x++)
             {
-                if (tilesArray[x, y] == go1)
+                if (tilesArray[x, y].gameObject == go1)
                 {
                     x1 = x;
                     y1 = y;
                 }
-                if (tilesArray[x, y] == go2)
+                if (tilesArray[x, y].gameObject == go2)
                 {
                     x2 = x;
                     y2 = y;
@@ -319,8 +318,8 @@ public class GameController : MonoBehaviour
             }
         }
 
-        List<GameObject> list1 = FindMatchFromSwappingTiles(go1, x1, y1, BoardController.instance.tiles);
-        List<GameObject> list2 = FindMatchFromSwappingTiles(go2, x2, y2, BoardController.instance.tiles);
+        List<GameObject> list1 = FindMatchFromSwappingTiles(go1, x1, y1, BoardController.Instance.tiles);
+        List<GameObject> list2 = FindMatchFromSwappingTiles(go2, x2, y2, BoardController.Instance.tiles);
 
         clearMatchList.AddRange(list1);
         clearMatchList.AddRange(list2);
@@ -328,7 +327,7 @@ public class GameController : MonoBehaviour
         return clearMatchList;
     }
 
-    public List<GameObject> FindMatchFromSwappingTiles(GameObject go, int IndexX, int IndexY, GameObject[,] tilesArray)
+    public List<GameObject> FindMatchFromSwappingTiles(GameObject go, int IndexX, int IndexY, TileController[,] tilesArray)
     {
         List<GameObject> checkingMatchListVertical = new List<GameObject>();
         List<GameObject> checkingMatchListHorizontal = new List<GameObject>();
@@ -338,7 +337,7 @@ public class GameController : MonoBehaviour
         {
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX, IndexY - i].GetComponent<SpriteRenderer>().sprite)
             {
-                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY - i]);
+                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY - i].gameObject);
             }
             else
                 break;
@@ -348,7 +347,7 @@ public class GameController : MonoBehaviour
         {
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX, IndexY + i].GetComponent<SpriteRenderer>().sprite)
             {
-                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY + i]);
+                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY + i].gameObject);
             }
             else
                 break;
@@ -360,7 +359,7 @@ public class GameController : MonoBehaviour
         {
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX - i, IndexY].GetComponent<SpriteRenderer>().sprite)
             {
-                checkingMatchListHorizontal.Add(tilesArray[IndexX - i, IndexY]);
+                checkingMatchListHorizontal.Add(tilesArray[IndexX - i, IndexY].gameObject);
             }
             else
                 break;
@@ -370,7 +369,7 @@ public class GameController : MonoBehaviour
         {
             if (tilesArray[IndexX, IndexY].GetComponent<SpriteRenderer>().sprite == tilesArray[IndexX + i, IndexY].GetComponent<SpriteRenderer>().sprite)
             {
-                checkingMatchListHorizontal.Add(tilesArray[IndexX + i, IndexY]);
+                checkingMatchListHorizontal.Add(tilesArray[IndexX + i, IndexY].gameObject);
             }
             else
                 break;
@@ -384,18 +383,17 @@ public class GameController : MonoBehaviour
         return totalList;
     }
 
-    public void FindAdjacentAndMatchIfPossible(Vector2 position1, Vector2 position2, TileController[,] tilesArray, Vector2 offsetPosition, Vector2 startPosition)
+    public void FindAdjacentAndMatchIfPossible(Vector2 position1, Vector2 position2, TileController[,] tilesArray)
     {
         float swipeAngle = Mathf.Atan2(position2.y - position1.y, position2.x - position1.x) * 180 / Mathf.PI;            
         for (int y = 0; y < tilesArray.GetLength(1); y++)
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (tilesArray[x, y] == firstTile)
+                if (tilesArray[x, y].gameObject == firstTile)
                 {
-
-                    if (GetTheAdjacentTile(swipeAngle, x, y))
-                        StartCoroutine(OnTileSwapping(firstTile, secondTile, BoardController.instance.tiles));
+                    if (GetTheAdjacentTile(swipeAngle, x, y, BoardController.Instance.tiles))
+                        StartCoroutine(OnTileSwapping(firstTile, secondTile, BoardController.Instance.tiles));
 
                     return;
                 }
