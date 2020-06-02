@@ -4,73 +4,16 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour
 {
-    public int rowLength;
-    public int columnLength;
-    public static BoardController Instance;
-    public GameObject tile;
-    public TileController[,] tiles ;
-    public List<Sprite> listSwapContainer = new List<Sprite>();
-    public Vector2 offset {get; private set;}
-    public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
-    public List<Sprite> characters = new List<Sprite>();
-    private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
+    
     [SerializeField] private GameController gcVar;
-
-    void Awake()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-    }
 
     void Start()
     {
-        offset = tile.GetComponent<SpriteRenderer>().bounds.size;
-
-        tiles = new TileController[rowLength, columnLength];
-
-        CreateBoard(offset.x, offset.y);
-
+        // offset = new Vector2 (0.8f, 0.8f);
         DetectMatchExist(FindTheMatchExist());
     }
 
-    public void CreateBoard(float xOffset, float yOffset)
-    {
-        tiles = new TileController[rowLength, columnLength];
-
-        for (int y = 0; y < columnLength; y++)
-        {
-            for (int x = 0; x < rowLength; x++)
-            {
-                GameObject newTile = Instantiate(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-                    tile, 
-                    new Vector3(
-                        startPosition.x + (xOffset * x), 
-                        startPosition.y - (yOffset * y), 
-                        0),
-                    tile.transform.rotation);
-                tiles[x, y] = newTile.GetComponent<TileController>();
-                newTile.name = "[ " + x + " , " + y + " ]";
-                tiles[x, y].transform.parent = transform;
-
-                List<Sprite> possibleCharacters = new List<Sprite>();
-
-                possibleCharacters.AddRange(characters);
-
-                if (x > 0)
-                    if (tiles[x - 1, y] != null)
-                        possibleCharacters.Remove(tiles[x - 1, y].GetComponent<SpriteRenderer>().sprite);
-                if (y > 0)
-                    if (tiles[x, y - 1] != null)
-                        possibleCharacters.Remove(tiles[x, y - 1].GetComponent<SpriteRenderer>().sprite);
-                Sprite newSprite = possibleCharacters[Random.Range(0, possibleCharacters.Count)];
-                newTile.GetComponent<SpriteRenderer>().sprite = newSprite;
-            }
-        }
-    }
+    
 
     private IEnumerator MoveTiles2(GameObject go, int indexX, int indexY)
     {

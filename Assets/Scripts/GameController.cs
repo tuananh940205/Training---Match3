@@ -11,7 +11,15 @@ public class GameController : MonoBehaviour
     public int score {get; private set;}
     public TileController firstTile = null;
     public TileController secondTile = null;
-    //private BoardController board;
+    public Vector2 offset {get; private set;}
+    public GameObject tile;
+    public TileController[,] tiles;
+    public int rowLength;
+    public int columnLength;
+    public List<Sprite> listSwapContainer = new List<Sprite>();
+    public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
+    public List<Sprite> characters = new List<Sprite>();
+    private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
 
     void Awake()
     {
@@ -21,15 +29,55 @@ public class GameController : MonoBehaviour
             return;
         }
         Instance = GetComponent<GameController>();
+
+        offset = tile.GetComponent<SpriteRenderer>().bounds.size;
+
+        tiles = new TileController[rowLength, columnLength];
+
+        CreateBoard(offset.x, offset.y);
     }
 
-    private void Start()  {
+    public void CreateBoard(float xOffset, float yOffset)
+    {
+        tiles = new TileController[rowLength, columnLength];
+
+        for (int y = 0; y < columnLength; y++)
+        {
+            for (int x = 0; x < rowLength; x++)
+            {
+                GameObject newTile = Instantiate(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+                    tile, 
+                    new Vector3(
+                        startPosition.x + (xOffset * x), 
+                        startPosition.y - (yOffset * y), 
+                        0),
+                    tile.transform.rotation);
+                tiles[x, y] = newTile.GetComponent<TileController>();
+                newTile.name = "[ " + x + " , " + y + " ]";
+                tiles[x, y].transform.parent = transform;
+
+                List<Sprite> possibleCharacters = new List<Sprite>();
+
+                possibleCharacters.AddRange(characters);
+
+                if (x > 0)
+                    if (tiles[x - 1, y] != null)
+                        possibleCharacters.Remove(tiles[x - 1, y].SpriteRenderer.sprite);
+                if (y > 0)
+                    if (tiles[x, y - 1] != null)
+                        possibleCharacters.Remove(tiles[x, y - 1].SpriteRenderer.sprite);
+                Sprite newSprite = possibleCharacters[Random.Range(0, possibleCharacters.Count)];
+                newTile.GetComponent<SpriteRenderer>().sprite = newSprite;
+            }
+        }
+    }
+
+    private void Start()
+    {
         ShowScore();
         TileController.onMouseUp += OnMouseUpHandler;
         TileController.onMouseDown += OnMouseDownHandler;
       //  board.CreateBoard(0.8f, 0.8f);
-
-
     }
 
     private void OnMouseUpHandler( Vector3 pos1, Vector3 pos2)
