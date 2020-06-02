@@ -7,8 +7,8 @@ using DG.Tweening;
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
-    [SerializeField] public Text scoreText;
-    [SerializeField] public int score;
+    public Text scoreText;
+    public int score {get; private set;}
     public GameObject firstTile = null;
     public GameObject secondTile = null;
 
@@ -135,8 +135,6 @@ public class GameController : MonoBehaviour
 
         if (totalList.Count >= 2)
             totalList.Add(go);
-
-        Debug.LogFormat("totalListCount = {0}", totalList.Count);
 
         return totalList;
     }

@@ -10,10 +10,10 @@ public class BoardController : MonoBehaviour
     public GameObject tile;
     public TileController[,] tiles ;
     public List<Sprite> listSwapContainer = new List<Sprite>();
-    public Vector2 offset;
+    public Vector2 offset {get; private set;}
     public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     public List<Sprite> characters = new List<Sprite>();
-    Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
+    private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
 
     void Awake()
     {
