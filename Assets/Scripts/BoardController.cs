@@ -247,7 +247,7 @@ public class BoardController : MonoBehaviour
         return listCanBeMatch;
     }
 
-    void DetectMatchExist(List<GameObject> listGO)
+    public void DetectMatchExist(List<GameObject> listGO)
     {
         if (listGO.Count > 0)
         {
@@ -257,7 +257,7 @@ public class BoardController : MonoBehaviour
         }
         else
         {
-            Debug.LogFormat("Match 404 not found. Reset the board");
+            //Debug.LogFormat("Match 404 not found. Reset the board");
             
             for (int y = 0; y < columnLength; y++)
             {
@@ -281,11 +281,20 @@ public class BoardController : MonoBehaviour
             {
                 for (int x = 0; x < rowLength; x++)
                 {
-                    List<GameObject> listMatch = GameController.Instance.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
-                    GameController.Instance.ClearAllPassiveMatches(listMatch, tiles);
+                    //List<GameObject> listMatch = GameController.Instance.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
+                    //GameController.Instance.ClearAllPassiveMatches(listMatch, tiles);
+                    FindAndClearMatchPassively(x, y);
                 }
             }
         }
+    }
+
+    public void FindAndClearMatchPassively(int xIndex, int yIndex)
+    {
+        List<GameObject> listMatch = GameController.Instance.FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
+        if (listMatch.Count >= 3)
+            GameController.Instance.ClearAllPassiveMatches(listMatch, tiles);
+        
     }
 
     public void GetNewUpperTiles2()
@@ -346,3 +355,4 @@ public class BoardController : MonoBehaviour
         }
     }
 }
+
