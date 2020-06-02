@@ -36,7 +36,7 @@ public class BoardController : MonoBehaviour
         DetectMatchExist(FindTheMatchExist());
     }
 
-    void CreateBoard(float xOffset, float yOffset)
+    private void CreateBoard(float xOffset, float yOffset)
     {
         tiles = new TileController[rowLength, columnLength];
 
@@ -71,7 +71,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    IEnumerator MoveTiles2(GameObject go, int indexX, int indexY)
+    private IEnumerator MoveTiles2(GameObject go, int indexX, int indexY)
     {
         Vector2 finalPosition = new Vector2(go.transform.position.x, startPosition.y - offset.y * indexY);
         while (Vector2.Distance(go.transform.position, finalPosition) >= .1f)
@@ -355,4 +355,3 @@ public class BoardController : MonoBehaviour
         }
     }
 }
-
