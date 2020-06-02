@@ -16,7 +16,8 @@ public class BoardController : MonoBehaviour
     }
 
 
-    public void CreateBoard(int row, int column){
+    public void CreateBoard(int row, int column)
+    {
         this.row = row;
         this.column = column;
         CreateBoard();
