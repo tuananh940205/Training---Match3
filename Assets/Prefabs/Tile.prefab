@@ -96,8 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6470394474124499a3edde572486717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fistPositionIsChecked: 0
-  secondPostionIsChecked: 0
+  gameController: {fileID: 0}
 --- !u!61 &1509912430509258556
 BoxCollider2D:
   m_ObjectHideFlags: 0

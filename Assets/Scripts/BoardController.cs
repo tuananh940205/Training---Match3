@@ -14,6 +14,7 @@ public class BoardController : MonoBehaviour
     public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     public List<Sprite> characters = new List<Sprite>();
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
+    [SerializeField] private GameController gcVar;
 
     void Awake()
     {
@@ -36,7 +37,7 @@ public class BoardController : MonoBehaviour
         DetectMatchExist(FindTheMatchExist());
     }
 
-    private void CreateBoard(float xOffset, float yOffset)
+    public void CreateBoard(float xOffset, float yOffset)
     {
         tiles = new TileController[rowLength, columnLength];
 
@@ -83,8 +84,8 @@ public class BoardController : MonoBehaviour
         }
         go.transform.position = finalPosition;
 
-        List<GameObject> listmatch = GameController.Instance.FindMatchesPassively(go, indexX, indexY, tiles);
-        GameController.Instance.ClearAllPassiveMatches(listmatch, tiles);
+        List<GameObject> listmatch = gcVar.FindMatchesPassively(go, indexX, indexY, tiles);
+        gcVar.ClearAllPassiveMatches(listmatch, tiles);
 
         DetectMatchExist(FindTheMatchExist());
     }
@@ -281,8 +282,8 @@ public class BoardController : MonoBehaviour
             {
                 for (int x = 0; x < rowLength; x++)
                 {
-                    //List<GameObject> listMatch = GameController.Instance.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
-                    //GameController.Instance.ClearAllPassiveMatches(listMatch, tiles);
+                    //List<GameObject> listMatch = gcVar.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
+                    //gcVar.ClearAllPassiveMatches(listMatch, tiles);
                     FindAndClearMatchPassively(x, y);
                 }
             }
@@ -291,9 +292,9 @@ public class BoardController : MonoBehaviour
 
     public void FindAndClearMatchPassively(int xIndex, int yIndex)
     {
-        List<GameObject> listMatch = GameController.Instance.FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
+        List<GameObject> listMatch = gcVar.FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
         if (listMatch.Count >= 3)
-            GameController.Instance.ClearAllPassiveMatches(listMatch, tiles);
+            gcVar.ClearAllPassiveMatches(listMatch, tiles);
         
     }
 

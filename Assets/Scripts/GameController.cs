@@ -9,8 +9,9 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
     public Text scoreText;
     public int score {get; private set;}
-    public GameObject firstTile = null;
-    public GameObject secondTile = null;
+    public TileController firstTile = null;
+    public TileController secondTile = null;
+    //private BoardController board;
 
     void Awake()
     {
@@ -22,7 +23,24 @@ public class GameController : MonoBehaviour
         Instance = GetComponent<GameController>();
     }
 
-    void Start() => ShowScore();
+    private void Start()  {
+        ShowScore();
+        TileController.onMouseUp += OnMouseUpHandler;
+        TileController.onMouseDown += OnMouseDownHandler;
+      //  board.CreateBoard(0.8f, 0.8f);
+
+
+    }
+
+    private void OnMouseUpHandler( Vector3 pos1, Vector3 pos2)
+    {
+        CheckAdjacent(pos1, pos2);
+    }
+
+    private void OnMouseDownHandler( TileController tile)
+    {
+        firstTile = tile;
+    }
 
     public IEnumerator AllTilesFadeOut(List<GameObject> tiles)
     {
@@ -154,7 +172,7 @@ public class GameController : MonoBehaviour
             if (xIndex < tilesArray.GetLength(0) - 1)
             {
                 if (BoardController.Instance.tiles[xIndex + 1, yIndex] != null)
-                    secondTile = tilesArray[xIndex + 1, yIndex].gameObject;
+                    secondTile = tilesArray[xIndex + 1, yIndex];
             }
         }
         else if (radiant > 45 && radiant < 135)
@@ -163,7 +181,7 @@ public class GameController : MonoBehaviour
             if (yIndex > 0)
             {
                 if (tilesArray[xIndex, yIndex - 1] != null)
-                    secondTile = tilesArray[xIndex, yIndex - 1].gameObject;
+                    secondTile = tilesArray[xIndex, yIndex - 1];
             }
         }
         else if (radiant > 135 || radiant < -135)
@@ -172,7 +190,7 @@ public class GameController : MonoBehaviour
             if (xIndex > 0)
             {
                 if (tilesArray[xIndex - 1, yIndex] != null)
-                    secondTile = tilesArray[xIndex - 1, yIndex].gameObject;
+                    secondTile = tilesArray[xIndex - 1, yIndex];
             }
         }
         else if (radiant > -135 && radiant < -45)
@@ -181,7 +199,7 @@ public class GameController : MonoBehaviour
             if (yIndex < tilesArray.GetLength(1) - 1)
             {
                 if (tilesArray[xIndex, yIndex + 1] != null)
-                    secondTile = tilesArray[xIndex, yIndex + 1].gameObject;
+                    secondTile = tilesArray[xIndex, yIndex + 1];
             }
         }
         if (secondTile != null)
@@ -365,10 +383,10 @@ public class GameController : MonoBehaviour
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
             {
-                if (tilesArray[x, y].gameObject == firstTile)
+                if (tilesArray[x, y] == firstTile)
                 {
                     if (GetTheAdjacentTile(swipeAngle, x, y, BoardController.Instance.tiles))
-                        OnTileSwapping(firstTile.GetComponent<TileController>(), secondTile.GetComponent<TileController>(), BoardController.Instance.tiles);
+                        OnTileSwapping(firstTile, secondTile, BoardController.Instance.tiles);
 
                     return;
                 }
@@ -385,6 +403,11 @@ public class GameController : MonoBehaviour
                 lastPosition,
                 BoardController.Instance.tiles);
         }
+    }
+    private void OnDestroy()
+    {
+        TileController.onMouseUp -= OnMouseUpHandler;
+        TileController.onMouseDown -= OnMouseDownHandler;
     }
 }
 

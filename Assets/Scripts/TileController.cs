@@ -7,6 +7,11 @@ public class TileController : MonoBehaviour
     private Vector2 lastPosition;
     private Tween tween;
     public SpriteRenderer SpriteRenderer { get; private set; }
+    public delegate void OnMouseUpEvent(Vector3 pos1, Vector3 pos2);
+    public static OnMouseUpEvent onMouseUp;
+    public delegate void OnMouseDownEvent(TileController tile);
+    public static OnMouseDownEvent onMouseDown;
+    [SerializeField] private GameController gameController;
 
     void Awake()
     {
@@ -14,7 +19,11 @@ public class TileController : MonoBehaviour
     }
     void OnMouseDown()
     {
-        GameController.Instance.firstTile = gameObject;
+       // GameController.Instance.firstTile = gameObject;
+        if (onMouseDown != null)
+        {
+            onMouseDown(this);
+        }
 
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         tween = transform.DOPath(
@@ -30,6 +39,11 @@ public class TileController : MonoBehaviour
         tween.Complete();
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        GameController.Instance.CheckAdjacent(firstPosition, lastPosition);
+    
+        if (onMouseUp != null){
+            onMouseUp (firstPosition, lastPosition);
+        }
+
+      //  GameController.Instance.CheckAdjacent(firstPosition, lastPosition);
     }
 }
