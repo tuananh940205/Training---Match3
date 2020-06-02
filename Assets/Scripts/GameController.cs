@@ -13,13 +13,14 @@ public class GameController : MonoBehaviour
     public TileController secondTile = null;
     public Vector2 offset {get; private set;}
     public GameObject tile;
-    public TileController[,] tiles;
+    
     public int rowLength;
     public int columnLength;
-    public List<Sprite> listSwapContainer = new List<Sprite>();
+    
     public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     public List<Sprite> characters = new List<Sprite>();
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
+    [SerializeField] private BoardController boardController;
 
     void Awake()
     {
@@ -107,7 +108,7 @@ public class GameController : MonoBehaviour
         }
         firstTile = null;
         secondTile = null;
-        BoardController.Instance.GetNewUpperTiles2();
+        boardController.GetNewUpperTiles2();
     }
 
     private void OnScoreChanged()
@@ -219,7 +220,7 @@ public class GameController : MonoBehaviour
             //Debug.LogFormat("Right");
             if (xIndex < tilesArray.GetLength(0) - 1)
             {
-                if (BoardController.Instance.tiles[xIndex + 1, yIndex] != null)
+                if (tiles[xIndex + 1, yIndex] != null)
                     secondTile = tilesArray[xIndex + 1, yIndex];
             }
         }
@@ -292,7 +293,7 @@ public class GameController : MonoBehaviour
         List<GameObject> listGameObject = new List<GameObject>();
         // StartCoroutine(SwappingTiles(go1, go2, targetPosition1, targetPosition2));
         tile1.transform.DOMove(targetPosition1, 0.35f);
-        tile2.transform.DOMove(targetPosition2, 0.35f).OnComplete(() => HandleSwappingTileFinalSteps(FindingTheMatches(tile1.gameObject, tile2.gameObject, BoardController.Instance.tiles), tile1, tile2));
+        tile2.transform.DOMove(targetPosition2, 0.35f).OnComplete(() => HandleSwappingTileFinalSteps(FindingTheMatches(tile1.gameObject, tile2.gameObject, tiles), tile1, tile2));
     }
 
     private void HandleSwappingTileFinalSteps(List<GameObject> listGO, TileController tile1, TileController tile2)
@@ -300,9 +301,166 @@ public class GameController : MonoBehaviour
         if (listGO.Contains(tile1.gameObject) || listGO.Contains(tile2.gameObject))
             StartCoroutine(AllTilesFadeOut(listGO));
         else
-            TileSwapBackOnMatchFailure(tile1, tile2, BoardController.Instance.tiles);
+            TileSwapBackOnMatchFailure(tile1, tile2, tiles);
     }
 
+    public List<GameObject> FindTheMatchExist()
+    {
+        // Debug.LogFormat("Execute Find the match exist");
+        List<GameObject> listCanBeMatch = new List<GameObject>();
+        for (int y = 0; y < columnLength; y++)
+        {
+            for (int x = 0; x < rowLength; x++)
+            {
+                if (y < columnLength - 3)
+                {
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x, y + 2].SpriteRenderer.sprite &&
+                    tiles[x, y].SpriteRenderer.sprite == tiles[x, y + 3].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 2].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 3].gameObject);
+                    }
+
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x, y + 1].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x, y + 3].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 3].gameObject);
+                    }
+                }
+
+                if (x < rowLength - 3)
+                {
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x + 2, y].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x + 3, y].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 2, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 3, y].gameObject);
+                    }
+
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x + 3, y].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 3, y].gameObject);
+                    }
+                }
+
+                // new write method
+                if (x < rowLength - 1 && y < columnLength - 2)
+                {
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y + 1].SpriteRenderer &&
+                            tiles[x, y].SpriteRenderer.sprite == tiles[x, y + 2].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 2].gameObject);
+                    }
+
+                    if (tiles[x + 1, y].SpriteRenderer.sprite == tiles[x, y + 1].SpriteRenderer.sprite &&
+                        tiles[x + 1, y].SpriteRenderer.sprite == tiles[x + 1, y + 2].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x + 1, y].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 2].gameObject);
+                    }
+
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y + 1].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y + 2].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 2].gameObject);
+                    }
+
+                    if (tiles[x + 1, y].SpriteRenderer.sprite == tiles[x, y + 1].SpriteRenderer.sprite &&
+                        tiles[x + 1, y].SpriteRenderer.sprite == tiles[x, y + 2].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x + 1, y].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 2].gameObject);
+                    }
+
+                    if (tiles[x + 1, y].SpriteRenderer.sprite == tiles[x + 1, y + 1].SpriteRenderer.sprite &&
+                        tiles[x + 1, y].SpriteRenderer.sprite == tiles[x, y + 2].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x + 1, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 2].gameObject);
+                    }
+
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x, y + 1].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y + 2].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 2].gameObject);
+                    }
+
+
+                }
+
+                if (x < rowLength - 2 && y < columnLength - 1)
+                {
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y + 1].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x + 2, y + 1].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x + 1, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 2, y + 1].gameObject);
+                    }
+
+                    if (tiles[x, y + 1].SpriteRenderer.sprite == tiles[x + 1, y + 1].SpriteRenderer.sprite &&
+                        tiles[x, y + 1].SpriteRenderer.sprite == tiles[x + 2, y].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x + 2, y].gameObject);
+                    }
+
+
+
+                    if (tiles[x, y + 1].SpriteRenderer.sprite == tiles[x + 1, y].SpriteRenderer.sprite &&
+                        tiles[x, y + 1].SpriteRenderer.sprite == tiles[x + 2, y].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 2, y].gameObject);
+                    }
+
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x + 2, y + 1].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 2, y + 1].gameObject);
+                    }
+
+                    if (tiles[x, y].SpriteRenderer.sprite == tiles[x + 2, y].SpriteRenderer.sprite &&
+                        tiles[x, y].SpriteRenderer.sprite == tiles[x + 1, y + 1].SpriteRenderer.sprite)
+                    {
+                        listCanBeMatch.Add(tiles[x, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 2, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y + 1].gameObject);
+                    }
+
+                    if (tiles[x, y + 1].SpriteRenderer.sprite == tiles[x + 1, y].SpriteRenderer.sprite &&
+                        tiles[x, y + 1].SpriteRenderer.sprite == tiles[x + 2, y + 1].SpriteRenderer.sprite)
+                    {
+                        //Debug.Log("Alooooooo");
+                        listCanBeMatch.Add(tiles[x, y + 1].gameObject);
+                        listCanBeMatch.Add(tiles[x + 1, y].gameObject);
+                        listCanBeMatch.Add(tiles[x + 2, y + 1].gameObject);
+                    }
+                }
+            }
+        }
+        return listCanBeMatch;
+    }
     private void TileSwapBackOnMatchFailure(TileController tile1, TileController tile2, TileController[,] tilesArray)
     {
         // Debug.LogFormat("Swap failed");
@@ -344,9 +502,9 @@ public class GameController : MonoBehaviour
         List<GameObject> clearMatchList = new List<GameObject>();
 
         int x1 = -1, y1 = -1, x2 = -1, y2 = -1;
-        for(int y = 0; y < BoardController.Instance.columnLength; y++)
+        for(int y = 0; y < columnLength; y++)
         {
-            for (int x = 0; x < BoardController.Instance.rowLength; x++)
+            for (int x = 0; x < rowLength; x++)
             {
                 if (tilesArray[x, y].gameObject == go1)
                 {
@@ -361,8 +519,8 @@ public class GameController : MonoBehaviour
             }
         }
 
-        List<GameObject> list1 = FindMatchFromSwappingTiles(go1.GetComponent<TileController>(), x1, y1, BoardController.Instance.tiles);
-        List<GameObject> list2 = FindMatchFromSwappingTiles(go2.GetComponent<TileController>(), x2, y2, BoardController.Instance.tiles);
+        List<GameObject> list1 = FindMatchFromSwappingTiles(go1.GetComponent<TileController>(), x1, y1, tiles);
+        List<GameObject> list2 = FindMatchFromSwappingTiles(go2.GetComponent<TileController>(), x2, y2, tiles);
 
         clearMatchList.AddRange(list1);
         clearMatchList.AddRange(list2);
@@ -433,8 +591,8 @@ public class GameController : MonoBehaviour
             {
                 if (tilesArray[x, y] == firstTile)
                 {
-                    if (GetTheAdjacentTile(swipeAngle, x, y, BoardController.Instance.tiles))
-                        OnTileSwapping(firstTile, secondTile, BoardController.Instance.tiles);
+                    if (GetTheAdjacentTile(swipeAngle, x, y, tiles))
+                        OnTileSwapping(firstTile, secondTile, tiles);
 
                     return;
                 }
@@ -446,10 +604,7 @@ public class GameController : MonoBehaviour
     {
         if (Vector2.Distance(firstPosition, lastPosition) >= 0.5f)
         {
-            FindAdjacentAndMatchIfPossible(
-                firstPosition,
-                lastPosition,
-                BoardController.Instance.tiles);
+            FindAdjacentAndMatchIfPossible(firstPosition,lastPosition,tiles);
         }
     }
     private void OnDestroy()
