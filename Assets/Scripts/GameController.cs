@@ -12,13 +12,13 @@ public class GameController : MonoBehaviour
     public TileController firstTile = null;
     public TileController secondTile = null;
     public Vector2 offset {get; private set;}
-    public GameObject tile;
-    public int rowLength;
-    public int columnLength;
+    [SerializeField] public GameObject tile;
+    public int rowLength { get { return 8; } }
+    public int columnLength {get { return 10;} }
     public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
-    public List<Sprite> characters = new List<Sprite>();
+    [SerializeField] public List<Sprite> characters = new List<Sprite>();
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
-    [SerializeField] private BoardController boardController;
+    [SerializeField] private BoardController boardControllerObject;
 
     void Awake()
     {
@@ -30,45 +30,11 @@ public class GameController : MonoBehaviour
         Instance = GetComponent<GameController>();
 
         offset = tile.GetComponent<SpriteRenderer>().bounds.size;
-        // CreateBoard(offset.x, offset.y);
-        // tiles = new TileController[rowLength, columnLength];
     }
 
-    public void CreateBoard(int row, int column, TileController[,] tiles)
+    void CreateBoard()
     {
-        rowLength = row;
-        columnLength = column;
-        tiles = new TileController[rowLength, columnLength];
-
-        for (int y = 0; y < columnLength; y++)
-        {
-            for (int x = 0; x < rowLength; x++)
-            {
-                GameObject newTile = Instantiate(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-                    tile, 
-                    new Vector3(
-                        startPosition.x + (offset.x * x), 
-                        startPosition.y - (offset.y * y), 
-                        0),
-                    tile.transform.rotation);
-                tiles[x, y] = newTile.GetComponent<TileController>();
-                newTile.name = "[ " + x + " , " + y + " ]";
-                tiles[x, y].transform.parent = transform;
-
-                List<Sprite> possibleCharacters = new List<Sprite>();
-
-                possibleCharacters.AddRange(characters);
-
-                if (x > 0)
-                    if (tiles[x - 1, y] != null)
-                        possibleCharacters.Remove(tiles[x - 1, y].SpriteRenderer.sprite);
-                if (y > 0)
-                    if (tiles[x, y - 1] != null)
-                        possibleCharacters.Remove(tiles[x, y - 1].SpriteRenderer.sprite);
-                Sprite newSprite = possibleCharacters[Random.Range(0, possibleCharacters.Count)];
-                newTile.GetComponent<SpriteRenderer>().sprite = newSprite;
-            }
-        }
+        boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, characters, tile);
     }
 
     private void Start()
@@ -76,16 +42,20 @@ public class GameController : MonoBehaviour
         ShowScore();
         TileController.onMouseUp += OnMouseUpHandler;
         TileController.onMouseDown += OnMouseDownHandler;
-        //board.CreateBoard(0.8f, 0.8f);
+        CreateBoard();
     }
 
-    private void OnMouseUpHandler( Vector3 pos1, Vector3 pos2)
+    private void OnMouseUpHandler(Vector2 pos1, Vector2 pos2)
     {
-        CheckAdjacent(pos1, pos2, boardController.tiles);
+        Debug.LogFormat("Execute gameController.OnMouseUpHandler");
+        Debug.LogFormat("aa" + boardControllerObject.tiles.Length);
+        CheckAdjacent(pos1, pos2, boardControllerObject.tiles);
+        
     }
 
-    private void OnMouseDownHandler( TileController tile)
+    private void OnMouseDownHandler(TileController tile)
     {
+        Debug.LogFormat("Execute OnMouseDownHandler");
         firstTile = tile;
     }
 
@@ -106,7 +76,7 @@ public class GameController : MonoBehaviour
         }
         firstTile = null;
         secondTile = null;
-        boardController.GetNewUpperTiles2(characters, startPosition, offset, coroutineMap);
+        boardControllerObject.OnBoardFilled(characters, startPosition, offset, coroutineMap);
     }
 
     private void OnScoreChanged()
@@ -299,7 +269,7 @@ public class GameController : MonoBehaviour
         if (listGO.Contains(tile1.gameObject) || listGO.Contains(tile2.gameObject))
             StartCoroutine(AllTilesFadeOut(listGO));
         else
-            TileSwapBackOnMatchFailure(tile1, tile2, boardController.tiles);
+            TileSwapBackOnMatchFailure(tile1, tile2, boardControllerObject.tiles);
     }
 
     
@@ -361,8 +331,8 @@ public class GameController : MonoBehaviour
             }
         }
 
-        List<GameObject> list1 = FindMatchFromSwappingTiles(go1.GetComponent<TileController>(), x1, y1, boardController.tiles);
-        List<GameObject> list2 = FindMatchFromSwappingTiles(go2.GetComponent<TileController>(), x2, y2, boardController.tiles);
+        List<GameObject> list1 = FindMatchFromSwappingTiles(go1.GetComponent<TileController>(), x1, y1, boardControllerObject.tiles);
+        List<GameObject> list2 = FindMatchFromSwappingTiles(go2.GetComponent<TileController>(), x2, y2, boardControllerObject.tiles);
 
         clearMatchList.AddRange(list1);
         clearMatchList.AddRange(list2);
@@ -426,7 +396,9 @@ public class GameController : MonoBehaviour
 
     public void FindAdjacentAndMatchIfPossible(Vector2 position1, Vector2 position2, TileController[,] tilesArray)
     {
-        float swipeAngle = Mathf.Atan2(position2.y - position1.y, position2.x - position1.x) * 180 / Mathf.PI;            
+        float swipeAngle = Mathf.Atan2(position2.y - position1.y, position2.x - position1.x) * 180 / Mathf.PI;
+        Debug.LogFormat("swipeAngle = {0}", swipeAngle);
+        Debug.LogFormat("arr1 = {0}", tilesArray.Length);
         for (int y = 0; y < tilesArray.GetLength(1); y++)
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
@@ -444,14 +416,19 @@ public class GameController : MonoBehaviour
 
     public void CheckAdjacent(Vector2 firstPosition, Vector2 lastPosition, TileController[,] tilesArray)
     {
+        Debug.LogFormat("Execute CheckAdjacent");
         if (Vector2.Distance(firstPosition, lastPosition) >= 0.5f)
         {
+            Debug.LogFormat("first = {0}, last = {1}", firstPosition, lastPosition);
             FindAdjacentAndMatchIfPossible(firstPosition,lastPosition,tilesArray);
         }
     }
     private void OnDestroy()
     {
+        Debug.LogFormat("Execute OnDestroy");
         TileController.onMouseUp -= OnMouseUpHandler;
         TileController.onMouseDown -= OnMouseDownHandler;
     }
+
+    
 }

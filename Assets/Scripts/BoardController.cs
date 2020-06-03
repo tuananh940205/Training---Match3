@@ -4,31 +4,52 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour
 {
-    [SerializeField] private GameController gcVar;
+    [SerializeField] private GameController gameControllerObject;
     public TileController[,] tiles;
     private List<Sprite> listSwapContainer = new List<Sprite>();
     private int row, column;
+    private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
+    private Vector2 offset;
+    private GameObject tile;
+    private  List<Sprite> characters;
 
-    void Awake()
+    // Create board
+    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, List<Sprite> _characters, GameObject tile)
     {
-        
-    }
-    void Start()
-    {
-        // offset = new Vector2 (0.8f, 0.8f);
-        DetectMatchExist(FindTheMatchExist());
-        CreateBoard(8, 10, tiles);
-    }
-
-
-    public void CreateBoard(int row, int column, TileController[,] tilesArray)
-    {
-        this.row = row;
-        this.column = column;
+        row = _row;
+        column = _column;
+        startPosition = _startPosition;
+        offset = _offset;
+        characters = _characters;
         tiles = new TileController[row, column];
-        gcVar.CreateBoard(this.row, this.column, tilesArray);
-    }
-    private IEnumerator MoveTiles2(GameObject go, int indexX, int indexY, Vector2 startPosition, Vector2 offset, TileController[,] tiles)
+
+       // tile = Resources.Load()
+        for (int y = 0; y < column; y++)
+        {
+            for (int x = 0; x < row; x++)
+            {
+                GameObject newTile = Instantiate(tile, new Vector3(startPosition.x + (offset.x * x), startPosition.y - (offset.y * y), 0), tile.transform.rotation);
+                tiles[x, y] = newTile.GetComponent<TileController>();
+                newTile.name = "[ " + x + " , " + y + " ]";
+                tiles[x, y].transform.parent = transform;
+
+                List<Sprite> possibleCharacters = new List<Sprite>();
+                possibleCharacters.AddRange(characters);
+
+                if (x > 0)
+                    if (tiles[x - 1, y] != null)
+                        possibleCharacters.Remove(tiles[x - 1, y].SpriteRenderer.sprite);
+                if (y > 0)
+                    if (tiles[x, y - 1] != null)
+                        possibleCharacters.Remove(tiles[x, y - 1].SpriteRenderer.sprite);
+
+                Sprite newSprite = possibleCharacters[Random.Range(0, possibleCharacters.Count)];
+                newTile.GetComponent<SpriteRenderer>().sprite = newSprite;
+            }
+        }
+    }    
+    
+    private IEnumerator MoveTilesDown(GameObject go, int indexX, int indexY, Vector2 startPosition, Vector2 offset, TileController[,] tiles)
     {
         Vector2 finalPosition = new Vector2(go.transform.position.x, startPosition.y - offset.y * indexY);
         while (Vector2.Distance(go.transform.position, finalPosition) >= .1f)
@@ -40,13 +61,13 @@ public class BoardController : MonoBehaviour
         }
         go.transform.position = finalPosition;
 
-        List<GameObject> listmatch = gcVar.FindMatchesPassively(go, indexX, indexY, tiles);
-        gcVar.ClearAllPassiveMatches(listmatch, tiles);
-
-        DetectMatchExist(FindTheMatchExist());
+        List<GameObject> listmatch = gameControllerObject.FindMatchesPassively(go, indexX, indexY, tiles);
+        gameControllerObject.ClearAllPassiveMatches(listmatch, tiles);
+    
+        DetectMatchExist(MatchableTiles());
     }
 
-    public List<GameObject> FindTheMatchExist()
+    public List<GameObject> MatchableTiles()
     {
         // Debug.LogFormat("Execute Find the match exist");
         List<GameObject> listCanBeMatch = new List<GameObject>();
@@ -204,8 +225,6 @@ public class BoardController : MonoBehaviour
         return listCanBeMatch;
     }
 
-    
-
     public void DetectMatchExist(List<GameObject> listGO)
     {
         if (listGO.Count > 0)
@@ -240,8 +259,8 @@ public class BoardController : MonoBehaviour
             {
                 for (int x = 0; x < row; x++)
                 {
-                    //List<GameObject> listMatch = gcVar.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
-                    //gcVar.ClearAllPassiveMatches(listMatch, tiles);
+                    List<GameObject> listMatch = gameControllerObject.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
+                    gameControllerObject.ClearAllPassiveMatches(listMatch, tiles);
                     FindAndClearMatchPassively(x, y);
                 }
             }
@@ -250,13 +269,15 @@ public class BoardController : MonoBehaviour
 
     public void FindAndClearMatchPassively(int xIndex, int yIndex)
     {
-        List<GameObject> listMatch = gcVar.FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
+        List<GameObject> listMatch = gameControllerObject
+        .FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
         if (listMatch.Count >= 3)
-            gcVar.ClearAllPassiveMatches(listMatch, tiles);
+            gameControllerObject.ClearAllPassiveMatches(listMatch, tiles);
         
     }
-
-    public void GetNewUpperTiles2(List<Sprite> listSprite, Vector2 startPosition, Vector2 offsetPosition, Dictionary<string, Coroutine> coroutineMap)
+    
+    // Fill board
+    public void OnBoardFilled(List<Sprite> listSprite, Vector2 startPosition, Vector2 offsetPosition, Dictionary<string, Coroutine> coroutineMap)
     {
         for (int y = 0; y < column; y++)
         {
@@ -309,7 +330,8 @@ public class BoardController : MonoBehaviour
                     StopCoroutine(coroutineMap[tiles[x, i].name]);
                     coroutineMap.Remove(tiles[x, i].name);
                 }
-                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTiles2(tiles[x, i].gameObject, x, i, gcVar.startPosition, gcVar.offset, tiles));
+                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTilesDown(tiles[x, i].gameObject, x, i, gameControllerObject
+                .startPosition, gameControllerObject.offset, tiles));
             }
         }
     }
