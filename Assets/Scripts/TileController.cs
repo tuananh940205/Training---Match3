@@ -38,7 +38,10 @@ public class TileController : MonoBehaviour
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     
         if (onMouseUp != null)
+        {
             onMouseUp (firstPosition, lastPosition);
-      //  GameController.Instance.CheckAdjacent(firstPosition, lastPosition);
+            Debug.LogFormat("onMouseUp != null");
+        }
+        // GameController.Instance.CheckAdjacent(firstPosition, lastPosition);
     }
 }
