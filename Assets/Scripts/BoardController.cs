@@ -225,6 +225,7 @@ public class BoardController : MonoBehaviour
         return listCanBeMatch;
     }
 
+    // Find Passive Match
     public void DetectMatchExist(List<GameObject> listGO)
     {
         if (listGO.Count > 0)
@@ -236,8 +237,14 @@ public class BoardController : MonoBehaviour
         else
         {
             //Debug.LogFormat("Match 404 not found. Reset the board");
-            
-            for (int y = 0; y < column; y++)
+            ShuffleBoard();
+        }
+    }
+
+    //ShuffleBoard
+    void ShuffleBoard()
+    {
+        for (int y = 0; y < column; y++)
             {
                 for (int x = 0; x < row; x++)
                 {
@@ -264,9 +271,7 @@ public class BoardController : MonoBehaviour
                     FindAndClearMatchPassively(x, y);
                 }
             }
-        }
     }
-
     public void FindAndClearMatchPassively(int xIndex, int yIndex)
     {
         List<GameObject> listMatch = gameControllerObject
