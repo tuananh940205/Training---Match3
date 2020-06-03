@@ -256,7 +256,7 @@ public class BoardController : MonoBehaviour
         
     }
 
-    public void GetNewUpperTiles2(List<Sprite> listSprite, Vector2 startPosition, Vector2 offsetPosition)
+    public void GetNewUpperTiles2(List<Sprite> listSprite, Vector2 startPosition, Vector2 offsetPosition, Dictionary<string, Coroutine> coroutineMap)
     {
         for (int y = 0; y < column; y++)
         {
@@ -309,7 +309,7 @@ public class BoardController : MonoBehaviour
                     StopCoroutine(coroutineMap[tiles[x, i].name]);
                     coroutineMap.Remove(tiles[x, i].name);
                 }
-                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTiles2(gcVar.tiles[x, i].gameObject, x, i, gcVar.startPosition, gcVar. offset));
+                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTiles2(tiles[x, i].gameObject, x, i, gcVar.startPosition, gcVar.offset, tiles));
             }
         }
     }

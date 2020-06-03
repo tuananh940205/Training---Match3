@@ -106,7 +106,7 @@ public class GameController : MonoBehaviour
         }
         firstTile = null;
         secondTile = null;
-        boardController.GetNewUpperTiles2();
+        boardController.GetNewUpperTiles2(characters, startPosition, offset, coroutineMap);
     }
 
     private void OnScoreChanged()
@@ -455,4 +455,3 @@ public class GameController : MonoBehaviour
         TileController.onMouseDown -= OnMouseDownHandler;
     }
 }
-

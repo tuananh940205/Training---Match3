@@ -21,9 +21,7 @@ public class TileController : MonoBehaviour
     {
        // GameController.Instance.firstTile = gameObject;
         if (onMouseDown != null)
-        {
             onMouseDown(this);
-        }
 
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         tween = transform.DOPath(
@@ -38,12 +36,9 @@ public class TileController : MonoBehaviour
     {
         tween.Complete();
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
     
-        if (onMouseUp != null){
+        if (onMouseUp != null)
             onMouseUp (firstPosition, lastPosition);
-        }
-
       //  GameController.Instance.CheckAdjacent(firstPosition, lastPosition);
     }
 }
