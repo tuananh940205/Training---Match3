@@ -68,13 +68,20 @@ public class GameController : MonoBehaviour
         firstTile = tile;
     }
 
+    void TilesFaded(List<TileController> tilesList)
+    {
+        foreach (var tile in tilesList)
+        {
+            tile.SpriteRenderer.DOFade(0, 0.5f);
+        }
+    }
     public IEnumerator AllTilesFadeOut(List<GameObject> tiles)
     {
         for (int i = 10; i > 0; i--)
         {
             foreach (var tile in tiles)
                 tile.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i * .1f);
- 
+
             yield return new WaitForSeconds(.05f);
         }
         foreach (var tile in tiles)
