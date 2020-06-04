@@ -4,10 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public enum  TileName
+[System.Serializable]
+public enum TileName
 {
-    Apple = 0,
-    Oranage = 1
+    Milk = 0,
+    Apple = 1,
+    Orange = 2,
+    Bread = 3,
+    Vegetable = 4,
+    Coconut = 5,
+    Flower = 6
 }
 
 public class GameController : MonoBehaviour
@@ -122,7 +128,7 @@ public class GameController : MonoBehaviour
 
     private void ClearAllPassiveMatchesHandler(List<TileController> listGO, TileController[,] tilesList)
     {
-        Debug.LogFormat("ClearAllPassiveMatchesHandler");
+        // Debug.LogFormat("ClearAllPassiveMatchesHandler");
         List<TileController> passivelyClearTileList = new List<TileController>();
         foreach (var go in listGO)
         {
@@ -145,7 +151,7 @@ public class GameController : MonoBehaviour
                 }
             }
         }
-        Debug.LogFormat("ClearAllPassiveMatchesHandler Count = {0}", passivelyClearTileList.Count);
+        // Debug.LogFormat("ClearAllPassiveMatchesHandler Count = {0}", passivelyClearTileList.Count);
         if (passivelyClearTileList.Count > 0)
             StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
     }
@@ -179,7 +185,7 @@ public class GameController : MonoBehaviour
 
     private List<TileController> FindMatchesPassivelyHandler(TileController tile, int IndexX, int IndexY, TileController[,] tilesArray)
     {
-        Debug.LogFormat("Execute FindMatchPassiveLy");
+        // Debug.LogFormat("Execute FindMatchPassiveLy");
         List<TileController> checkingMatchListVertical = new List<TileController>();
         List<TileController> checkingMatchListHorizontal = new List<TileController>();
         List<TileController> totalList = new List<TileController>();
@@ -234,7 +240,7 @@ public class GameController : MonoBehaviour
 
         if (totalList.Count >= 2)
             totalList.Add(tile);
-        Debug.LogFormat("FindMatchesPassivelyHandler = {0}", totalList.Count);
+        // Debug.LogFormat("FindMatchesPassivelyHandler = {0}", totalList.Count);
         return totalList;
     }
 
@@ -354,7 +360,7 @@ public class GameController : MonoBehaviour
 
     private void OnTileSwapping(TileController tile1, TileController tile2, TileController[,] tilesList)
     {
-        Debug.LogFormat("Swapping");
+        // Debug.LogFormat("Swapping");
         int temp1 = -1, temp2 = -1, temp3 = -1, temp4 = -1;
         for (int y = 0; y < tilesList.GetLength(1); y++)
         {
@@ -387,13 +393,13 @@ public class GameController : MonoBehaviour
         // StartCoroutine(SwappingTiles(go1, go2, targetPosition1, targetPosition2));
         tile1.transform.DOMove(targetPosition1, 0.35f);
         tile2.transform.DOMove(targetPosition2, 0.35f).OnComplete(() => HandleSwappingTileFinalSteps(FindingTheMatches(tile1, tile2, tilesList), tile1, tile2));
-        Debug.LogFormat("EndSwapFunction");
+        // Debug.LogFormat("EndSwapFunction");
     }
 
     private void HandleSwappingTileFinalSteps(List<TileController> tilesList, TileController tile1, TileController tile2)
     {
-        Debug.LogFormat("HandleSwappingTileFinalSteps");
-        Debug.LogFormat("listCount = {0}", tilesList.Count);
+        // Debug.LogFormat("HandleSwappingTileFinalSteps");
+        // Debug.LogFormat("listCount = {0}", tilesList.Count);
         if (tilesList.Contains(tile1) || tilesList.Contains(tile2))
             StartCoroutine(AllTilesFadeOut(tilesList));
         else
@@ -465,18 +471,18 @@ public class GameController : MonoBehaviour
 
         // clearMatchList.AddRange(list1);
         // clearMatchList.AddRange(list2);
-        Debug.LogFormat("FindingTheMatches return {0}", clearMatchList.Count);
+        // Debug.LogFormat("FindingTheMatches return {0}", clearMatchList.Count);
         return clearMatchList;
     }
 
     public List<TileController> FindMatchFromSwappingTiles(TileController go, int IndexX, int IndexY, TileController[,] tilesList)
     {
-        Debug.LogFormat("FindMatchfromSwappingTiles {0}", go.gameObject);
+        // Debug.LogFormat("FindMatchfromSwappingTiles {0}", go.gameObject);
         List<TileController> checkingMatchListVertical = new List<TileController>();
         List<TileController> checkingMatchListHorizontal = new List<TileController>();
         List<TileController> totalList = new List<TileController>();
         // Scanning up
-        Debug.LogFormat("Step 1");
+        // Debug.LogFormat("Step 1");
         for (int i = 1; i <= IndexY; i++)
         {
             if (tilesList[IndexX, IndexY].SpriteRenderer.sprite == tilesList[IndexX, IndexY - i].SpriteRenderer.sprite)
@@ -486,21 +492,21 @@ public class GameController : MonoBehaviour
             else
                 break;
         }
-        Debug.LogFormat("Step 2");
+        // Debug.LogFormat("Step 2");
         //scanning down
         for (int i = 1; i < tilesList.GetLength(1) - IndexY; i++)
         {
-            Debug.LogFormat("Step 2.1");
-            Debug.LogFormat("tilesList.GetLength(1) = {0}, indexY = {1}", tilesList.GetLength(1), IndexY);
+            // Debug.LogFormat("Step 2.1");
+            // Debug.LogFormat("tilesList.GetLength(1) = {0}, indexY = {1}", tilesList.GetLength(1), IndexY);
             if (tilesList[IndexX, IndexY].SpriteRenderer.sprite == tilesList[IndexX, IndexY + i].SpriteRenderer.sprite)
             {
-                Debug.LogFormat("Step 2.2.{0}",i);
+                // Debug.LogFormat("Step 2.2.{0}",i);
                 checkingMatchListVertical.Add(tilesList[IndexX, IndexY + i]);
             }
             else
                 break;
         }
-        Debug.LogFormat("Step 3");
+        // Debug.LogFormat("Step 3");
         if (checkingMatchListVertical.Count >= 2)
             totalList.AddRange(checkingMatchListVertical);
         // SCANNING LEFT
@@ -511,7 +517,7 @@ public class GameController : MonoBehaviour
             else
                 break;
         }
-        Debug.LogFormat("Step 4");
+        // Debug.LogFormat("Step 4");
         // SCANNING RIGHT
         for (int i = 1; i < tilesList.GetLength(0) - IndexX; i++)
         {
@@ -522,7 +528,7 @@ public class GameController : MonoBehaviour
             else
                 break;
         }
-        Debug.LogFormat("Step 5");
+        // Debug.LogFormat("Step 5");
         if (checkingMatchListHorizontal.Count >= 2)
             totalList.AddRange(checkingMatchListHorizontal);
 
@@ -561,7 +567,7 @@ public class GameController : MonoBehaviour
     }
     private void OnDestroy()
     {
-        Debug.LogFormat("Execute OnDestroy");
+        // Debug.LogFormat("Execute OnDestroy");
         TileController.onMouseUp -= OnMouseUpHandler;
         TileController.onMouseDown -= OnMouseDownHandler;
         BoardController.findMatchesPassively -= FindMatchesPassivelyHandler;
