@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
- 
+
 public class TileController : MonoBehaviour
 {
     private Vector2 firstPosition;
@@ -13,7 +13,7 @@ public class TileController : MonoBehaviour
     public static OnMouseDownEvent onMouseDown;
     [SerializeField] private GameController gameController;
     public TileName tileName;
- 
+
     void Awake()
     {
         SpriteRenderer = GetComponent<SpriteRenderer>();
@@ -23,7 +23,7 @@ public class TileController : MonoBehaviour
         //Debug.LogFormat("OnMouseDown");
         //Debug.LogFormat("OnMouseDown != mull");
         onMouseDown?.Invoke(this);
- 
+
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         tween = transform.DOPath(
             new Vector3[] {transform.position,
@@ -32,7 +32,7 @@ public class TileController : MonoBehaviour
                 transform.position.z), transform.position },
             .8f);
     }
- 
+
     void OnMouseUp()
     {
         tween.Complete();
@@ -42,4 +42,3 @@ public class TileController : MonoBehaviour
         onMouseUp?.Invoke(firstPosition, lastPosition);
     }
 }
-

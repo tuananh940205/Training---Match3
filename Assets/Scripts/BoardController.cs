@@ -12,9 +12,9 @@ public class BoardController : MonoBehaviour
     private Vector2 offset;
     private GameObject tile;
     private List<Sprite> characters;
-    public delegate List<GameObject> FindMatchesPassivelyEvent(GameObject go, int indexX, int indexY, TileController[,] tilesArray);
+    public delegate List<TileController> FindMatchesPassivelyEvent(TileController tile, int indexX, int indexY, TileController[,] tilesArray);
     public static FindMatchesPassivelyEvent findMatchesPassively;
-    public delegate void ClearAllPassiveMatchesEvent(List<GameObject> listGo, TileController[,] tilesArray);
+    public delegate void ClearAllPassiveMatchesEvent(List<TileController> listGo, TileController[,] tilesArray);
     public static ClearAllPassiveMatchesEvent clearAllPassiveMatches;
 
     // Create board
@@ -54,18 +54,18 @@ public class BoardController : MonoBehaviour
         }
     }    
     
-    private IEnumerator MoveTilesDown(GameObject go, int indexX, int indexY, Vector2 startPosition, Vector2 offset, TileController[,] tilesArray)
+    private IEnumerator MoveTilesDown(TileController go, int indexX, int indexY, Vector2 startPosition, Vector2 offset, TileController[,] tilesArray)
     {
         Vector2 finalPosition = new Vector2(go.transform.position.x, startPosition.y - offset.y * indexY);
         while (Vector2.Distance(go.transform.position, finalPosition) >= .1f)
         {
             go.transform.position = Vector2.MoveTowards(go.transform.position, finalPosition, 0.25f);
             if (go.transform.position.y <= startPosition.y + offset.y)
-                go.SetActive(true);
+                go.gameObject.SetActive(true);
             yield return new WaitForSeconds(.05f);
         }
         go.transform.position = finalPosition;
-        List<GameObject> listmatch;
+        List<TileController> listmatch;
         if (findMatchesPassively != null && clearAllPassiveMatches != null)
         {
             listmatch = findMatchesPassively(go, indexX, indexY, tilesArray);
@@ -278,7 +278,7 @@ public class BoardController : MonoBehaviour
             {
                 if (findMatchesPassively != null && clearAllPassiveMatches != null)
                 {
-                    List<GameObject> listMatch = findMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
+                    List<TileController> listMatch = findMatchesPassively(tiles[x, y], x, y, tiles);
                     clearAllPassiveMatches(listMatch, tiles);
                     FindAndClearMatchPassively(x, y);
                 }
@@ -289,9 +289,9 @@ public class BoardController : MonoBehaviour
     }
     public void FindAndClearMatchPassively(int xIndex, int yIndex)
     {
-        List<GameObject> listMatch = new List<GameObject>();
+        List<TileController> listMatch = new List<TileController>();
         if (findMatchesPassively != null)
-            listMatch = findMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
+            listMatch = findMatchesPassively(tiles[xIndex, yIndex], xIndex, yIndex, tiles);
         //List<GameObject> listMatch = gameControllerObject.FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
         if (listMatch.Count >= 3 && clearAllPassiveMatches != null)
             //gameControllerObject.ClearAllPassiveMatches(listMatch, tiles);
@@ -353,7 +353,7 @@ public class BoardController : MonoBehaviour
                     StopCoroutine(coroutineMap[tiles[x, i].name]);
                     coroutineMap.Remove(tiles[x, i].name);
                 }
-                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTilesDown(tiles[x, i].gameObject, x, i, startPosition, offsetPosition, tiles));
+                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTilesDown(tiles[x, i], x, i, startPosition, offsetPosition, tiles));
             }
         }
     }
