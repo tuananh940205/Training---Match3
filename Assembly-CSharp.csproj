@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\Test\Test06.cs" />
     <Compile Include="Assets\Scripts\Test\Test07.cs" />
+    <Compile Include="Assets\Scripts\Test\Test08.cs" />
     <Compile Include="Assets\Scripts\Test\TestFive.cs" />
     <Compile Include="Assets\Scripts\Test\TestFourBall.cs" />
     <Compile Include="Assets\Scripts\Test\TestOne.cs" />
