@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using DG.Tweening;
-
+ 
 public class TileController : MonoBehaviour
 {
     private Vector2 firstPosition;
@@ -12,21 +12,18 @@ public class TileController : MonoBehaviour
     public delegate void OnMouseDownEvent(TileController tile);
     public static OnMouseDownEvent onMouseDown;
     [SerializeField] private GameController gameController;
-
+    public TileName tileName;
+ 
     void Awake()
     {
         SpriteRenderer = GetComponent<SpriteRenderer>();
     }
     void OnMouseDown()
     {
-        Debug.LogFormat("OnMouseDown");
-        if (onMouseDown != null)
-        {
-            Debug.LogFormat("OnMouseDown != mull");
-            onMouseDown(this);
-        }
-            
-
+        //Debug.LogFormat("OnMouseDown");
+        //Debug.LogFormat("OnMouseDown != mull");
+        onMouseDown?.Invoke(this);
+ 
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         tween = transform.DOPath(
             new Vector3[] {transform.position,
@@ -35,17 +32,14 @@ public class TileController : MonoBehaviour
                 transform.position.z), transform.position },
             .8f);
     }
-
+ 
     void OnMouseUp()
     {
         tween.Complete();
         lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    
-        if (onMouseUp != null)
-        {
-            Debug.LogFormat("onMouseUp != null");
-            onMouseUp(firstPosition, lastPosition);
-        }
-        // GameController.Instance.CheckAdjacent(firstPosition, lastPosition);
+
+        //Debug.LogFormat("onMouseUp != null");
+        onMouseUp?.Invoke(firstPosition, lastPosition);
     }
 }
+

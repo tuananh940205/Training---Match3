@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4614249991870538531}
   - component: {fileID: 760936365647841822}
   - component: {fileID: 1509912430509258556}
-  - component: {fileID: 1294301475738563741}
   m_Layer: 0
   m_Name: Tile
   m_TagString: Untagged
@@ -123,22 +122,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.56, y: 2.56}
   m_EdgeRadius: 0
---- !u!95 &1294301475738563741
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3413501269598016828}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4a13b44111f7e4842b87f44fb63b738d, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0

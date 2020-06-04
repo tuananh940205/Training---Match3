@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour
 {
-    [SerializeField] private GameController gameControllerObject;
+    //[SerializeField] private GameController gameControllerObject;
     public TileController[,] tiles;
     private List<Sprite> listSwapContainer = new List<Sprite>();
     private int row, column;
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     private Vector2 offset;
     private GameObject tile;
-    private  List<Sprite> characters;
+    private List<Sprite> characters;
+    public delegate List<GameObject> FindMatchesPassivelyEvent(GameObject go, int indexX, int indexY, TileController[,] tilesArray);
+    public static FindMatchesPassivelyEvent findMatchesPassively;
+    public delegate void ClearAllPassiveMatchesEvent(List<GameObject> listGo, TileController[,] tilesArray);
+    public static ClearAllPassiveMatchesEvent clearAllPassiveMatches;
 
     // Create board
-    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, List<Sprite> _characters, GameObject tile)
+    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, List<Sprite> _characters, GameObject _tile)
     {
         row = _row;
         column = _column;
@@ -22,6 +26,7 @@ public class BoardController : MonoBehaviour
         offset = _offset;
         characters = _characters;
         tiles = new TileController[row, column];
+        tile = _tile;
 
        // tile = Resources.Load()
         for (int y = 0; y < column; y++)
@@ -49,7 +54,7 @@ public class BoardController : MonoBehaviour
         }
     }    
     
-    private IEnumerator MoveTilesDown(GameObject go, int indexX, int indexY, Vector2 startPosition, Vector2 offset, TileController[,] tiles)
+    private IEnumerator MoveTilesDown(GameObject go, int indexX, int indexY, Vector2 startPosition, Vector2 offset, TileController[,] tilesArray)
     {
         Vector2 finalPosition = new Vector2(go.transform.position.x, startPosition.y - offset.y * indexY);
         while (Vector2.Distance(go.transform.position, finalPosition) >= .1f)
@@ -60,9 +65,14 @@ public class BoardController : MonoBehaviour
             yield return new WaitForSeconds(.05f);
         }
         go.transform.position = finalPosition;
-
-        List<GameObject> listmatch = gameControllerObject.FindMatchesPassively(go, indexX, indexY, tiles);
-        gameControllerObject.ClearAllPassiveMatches(listmatch, tiles);
+        List<GameObject> listmatch;
+        if (findMatchesPassively != null && clearAllPassiveMatches != null)
+        {
+            listmatch = findMatchesPassively(go, indexX, indexY, tilesArray);
+            clearAllPassiveMatches(listmatch, tilesArray);
+        }
+        //List<GameObject> listmatch = gameControllerObject.FindMatchesPassively(go, indexX, indexY, tiles);
+        //gameControllerObject.ClearAllPassiveMatches(listmatch, tilesArray);
     
         DetectMatchExist(MatchableTiles());
     }
@@ -245,39 +255,47 @@ public class BoardController : MonoBehaviour
     void ShuffleBoard()
     {
         for (int y = 0; y < column; y++)
+        {
+            for (int x = 0; x < row; x++)
             {
-                for (int x = 0; x < row; x++)
-                {
-                    listSwapContainer.Add(tiles[x, y].SpriteRenderer.sprite);
-                }
+                listSwapContainer.Add(tiles[x, y].SpriteRenderer.sprite);
             }
+        }
 
-            for (int y = 0; y < column; y++)
+        for (int y = 0; y < column; y++)
+        {
+            for (int x = 0; x < row; x++)
             {
-                for (int x = 0; x < row; x++)
-                {
-                    Sprite go = listSwapContainer[Random.Range(0, listSwapContainer.Count)];
-                    tiles[x, y].SpriteRenderer.sprite = go;
-                    listSwapContainer.Remove(go);
-                }
+                Sprite go = listSwapContainer[Random.Range(0, listSwapContainer.Count)];
+                tiles[x, y].SpriteRenderer.sprite = go;
+                listSwapContainer.Remove(go);
             }
+        }
 
-            for (int y = 0; y < column; y++)
+        for (int y = 0; y < column; y++)
+        {
+            for (int x = 0; x < row; x++)
             {
-                for (int x = 0; x < row; x++)
+                if (findMatchesPassively != null && clearAllPassiveMatches != null)
                 {
-                    List<GameObject> listMatch = gameControllerObject.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
-                    gameControllerObject.ClearAllPassiveMatches(listMatch, tiles);
+                    List<GameObject> listMatch = findMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
+                    clearAllPassiveMatches(listMatch, tiles);
                     FindAndClearMatchPassively(x, y);
                 }
+                //List<GameObject> listMatch = gameControllerObject.FindMatchesPassively(tiles[x, y].gameObject, x, y, tiles);
+                //gameControllerObject.ClearAllPassiveMatches(listMatch, tiles);
             }
+        }
     }
     public void FindAndClearMatchPassively(int xIndex, int yIndex)
     {
-        List<GameObject> listMatch = gameControllerObject
-        .FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
-        if (listMatch.Count >= 3)
-            gameControllerObject.ClearAllPassiveMatches(listMatch, tiles);
+        List<GameObject> listMatch = new List<GameObject>();
+        if (findMatchesPassively != null)
+            listMatch = findMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
+        //List<GameObject> listMatch = gameControllerObject.FindMatchesPassively(tiles[xIndex, yIndex].gameObject, xIndex, yIndex, tiles);
+        if (listMatch.Count >= 3 && clearAllPassiveMatches != null)
+            //gameControllerObject.ClearAllPassiveMatches(listMatch, tiles);
+            clearAllPassiveMatches(listMatch, tiles);
         
     }
     
@@ -335,8 +353,7 @@ public class BoardController : MonoBehaviour
                     StopCoroutine(coroutineMap[tiles[x, i].name]);
                     coroutineMap.Remove(tiles[x, i].name);
                 }
-                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTilesDown(tiles[x, i].gameObject, x, i, gameControllerObject
-                .startPosition, gameControllerObject.offset, tiles));
+                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTilesDown(tiles[x, i].gameObject, x, i, startPosition, offsetPosition, tiles));
             }
         }
     }

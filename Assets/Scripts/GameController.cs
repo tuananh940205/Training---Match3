@@ -4,6 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+
+
+public enum  TileName {
+
+    Apple = 0,
+    Oranage = 1
+}
+
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
@@ -24,7 +32,7 @@ public class GameController : MonoBehaviour
     {
         if (Instance != null)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
         Instance = GetComponent<GameController>();
@@ -32,7 +40,7 @@ public class GameController : MonoBehaviour
         offset = tile.GetComponent<SpriteRenderer>().bounds.size;
     }
 
-    void CreateBoard()
+    private void CreateBoard()
     {
         boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, characters, tile);
     }
@@ -42,20 +50,21 @@ public class GameController : MonoBehaviour
         ShowScore();
         TileController.onMouseUp += OnMouseUpHandler;
         TileController.onMouseDown += OnMouseDownHandler;
+        BoardController.findMatchesPassively += FindMatchesPassivelyHandler;
+        BoardController.clearAllPassiveMatches += ClearAllPassiveMatchesHandler;
         CreateBoard();
+        boardControllerObject.DetectMatchExist(boardControllerObject.MatchableTiles());
     }
 
     private void OnMouseUpHandler(Vector2 pos1, Vector2 pos2)
     {
-        Debug.LogFormat("Execute gameController.OnMouseUpHandler");
-        Debug.LogFormat("aa" + boardControllerObject.tiles.Length);
+        //Debug.LogFormat("Execute gameController.OnMouseUpHandler");
         CheckAdjacent(pos1, pos2, boardControllerObject.tiles);
-        
     }
 
     private void OnMouseDownHandler(TileController tile)
     {
-        Debug.LogFormat("Execute OnMouseDownHandler");
+        //Debug.LogFormat("Execute OnMouseDownHandler");
         firstTile = tile;
     }
 
@@ -65,7 +74,7 @@ public class GameController : MonoBehaviour
         {
             foreach (var tile in tiles)
                 tile.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i * .1f);
-
+ 
             yield return new WaitForSeconds(.05f);
         }
         foreach (var tile in tiles)
@@ -85,6 +94,34 @@ public class GameController : MonoBehaviour
         scoreText.text = "Score: " + score.ToString();
     }
 
+    private void ClearAllPassiveMatchesHandler(List<GameObject> listGO, TileController[,] tilesArray)
+    {
+        List<GameObject> passivelyClearTileList = new List<GameObject>();
+        foreach (var go in listGO)
+        {
+            for (int x = 0; x < tilesArray.GetLength(0); x++)
+            {
+                for (int y = tilesArray.GetLength(1) - 1; y >= 0; y--)
+                {
+                    if (tilesArray[x, y].gameObject == go)
+                    {
+                        if (!passivelyClearTileList.Contains(tilesArray[x, y].gameObject))
+                        {
+
+                            foreach (var tile in FindMatchesPassivelyHandler(tilesArray[x, y].gameObject, x, y, tilesArray))
+                            {
+                                if (!passivelyClearTileList.Contains(tile))
+                                    passivelyClearTileList.Add(tile);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (passivelyClearTileList.Count > 0)
+            StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
+    }
+
     public void ClearAllPassiveMatches(List<GameObject> listGO, TileController[,] tilesArray)
     {
         List<GameObject> passivelyClearTileList = new List<GameObject>();
@@ -99,7 +136,7 @@ public class GameController : MonoBehaviour
                         if (!passivelyClearTileList.Contains(tilesArray[x, y].gameObject))
                         {
 
-                            foreach(var tile in FindMatchesPassively(tilesArray[x, y].gameObject, x, y, tilesArray))
+                            foreach(var tile in FindMatchesPassivelyHandler(tilesArray[x, y].gameObject, x, y, tilesArray))
                             {
                                 if (!passivelyClearTileList.Contains(tile))
                                     passivelyClearTileList.Add(tile);
@@ -111,6 +148,67 @@ public class GameController : MonoBehaviour
         }
         if (passivelyClearTileList.Count > 0)
             StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
+    }
+
+    private List<GameObject> FindMatchesPassivelyHandler(GameObject go, int IndexX, int IndexY, TileController[,] tilesArray)
+    {
+        //Debug.LogFormat("Execute FindMatchPassiveLy");
+        List<GameObject> checkingMatchListVertical = new List<GameObject>();
+        List<GameObject> checkingMatchListHorizontal = new List<GameObject>();
+        List<GameObject> totalList = new List<GameObject>();
+        // Scanning up
+        for (int i = 1; i <= IndexY; i++)
+        {
+            if (tilesArray[IndexX, IndexY].SpriteRenderer.sprite == tilesArray[IndexX, IndexY - i].SpriteRenderer.sprite)
+            {
+                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY - i].name, IndexX, IndexY - 1);
+                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY - i].gameObject);
+            }
+            else
+                break;
+        }
+        //scanning down
+        for (int i = 1; i < tilesArray.GetLength(1) - IndexY; i++)
+        {
+            if (tilesArray[IndexX, IndexY].SpriteRenderer.sprite == tilesArray[IndexX, IndexY + i].SpriteRenderer.sprite)
+            {
+                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY + i].name, IndexX, IndexY + 1);
+                checkingMatchListVertical.Add(tilesArray[IndexX, IndexY + i].gameObject);
+            }
+            else
+                break;
+        }
+        if (checkingMatchListVertical.Count >= 2)
+            totalList.AddRange(checkingMatchListVertical);
+        // SCANNING LEFT
+        for (int i = 1; i <= IndexX; i++)
+        {
+            if (tilesArray[IndexX, IndexY].SpriteRenderer.sprite == tilesArray[IndexX - i, IndexY].SpriteRenderer.sprite)
+            {
+                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX - i, IndexY].name, IndexX - i, IndexY);
+                checkingMatchListHorizontal.Add(tilesArray[IndexX - i, IndexY].gameObject);
+            }
+            else
+                break;
+        }
+        // SCANNING RIGHT
+        for (int i = 1; i < tilesArray.GetLength(0) - IndexX; i++)
+        {
+            if (tilesArray[IndexX, IndexY].SpriteRenderer.sprite == tilesArray[IndexX + i, IndexY].SpriteRenderer.sprite)
+            {
+                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", BoardController.instance.tiles[IndexX + i, IndexY].name, IndexX + i, IndexY);
+                checkingMatchListHorizontal.Add(tilesArray[IndexX + i, IndexY].gameObject);
+            }
+            else
+                break;
+        }
+        if (checkingMatchListHorizontal.Count >= 2)
+            totalList.AddRange(checkingMatchListHorizontal);
+
+        if (totalList.Count >= 2)
+            totalList.Add(go);
+
+        return totalList;
     }
 
     public List<GameObject> FindMatchesPassively(GameObject go, int IndexX, int IndexY, TileController[,] tilesArray)
@@ -271,7 +369,6 @@ public class GameController : MonoBehaviour
         else
             TileSwapBackOnMatchFailure(tile1, tile2, boardControllerObject.tiles);
     }
-
     
     private void TileSwapBackOnMatchFailure(TileController tile1, TileController tile2, TileController[,] tilesArray)
     {
@@ -339,7 +436,7 @@ public class GameController : MonoBehaviour
         
         return clearMatchList;
     }
-
+ 
     public List<GameObject> FindMatchFromSwappingTiles(TileController go, int IndexX, int IndexY, TileController[,] tilesArray)
     {
         List<GameObject> checkingMatchListVertical = new List<GameObject>();
@@ -397,8 +494,8 @@ public class GameController : MonoBehaviour
     public void FindAdjacentAndMatchIfPossible(Vector2 position1, Vector2 position2, TileController[,] tilesArray)
     {
         float swipeAngle = Mathf.Atan2(position2.y - position1.y, position2.x - position1.x) * 180 / Mathf.PI;
-        Debug.LogFormat("swipeAngle = {0}", swipeAngle);
-        Debug.LogFormat("arr1 = {0}", tilesArray.Length);
+        //Debug.LogFormat("swipeAngle = {0}", swipeAngle);
+        //Debug.LogFormat("arr1 = {0}", tilesArray.Length);
         for (int y = 0; y < tilesArray.GetLength(1); y++)
         {
             for (int x = 0; x < tilesArray.GetLength(0); x++)
@@ -416,10 +513,10 @@ public class GameController : MonoBehaviour
 
     public void CheckAdjacent(Vector2 firstPosition, Vector2 lastPosition, TileController[,] tilesArray)
     {
-        Debug.LogFormat("Execute CheckAdjacent");
+        //Debug.LogFormat("Execute CheckAdjacent");
         if (Vector2.Distance(firstPosition, lastPosition) >= 0.5f)
         {
-            Debug.LogFormat("first = {0}, last = {1}", firstPosition, lastPosition);
+            //Debug.LogFormat("first = {0}, last = {1}", firstPosition, lastPosition);
             FindAdjacentAndMatchIfPossible(firstPosition,lastPosition,tilesArray);
         }
     }
@@ -428,7 +525,8 @@ public class GameController : MonoBehaviour
         Debug.LogFormat("Execute OnDestroy");
         TileController.onMouseUp -= OnMouseUpHandler;
         TileController.onMouseDown -= OnMouseDownHandler;
-    }
-
-    
+        BoardController.findMatchesPassively -= FindMatchesPassivelyHandler;
+        BoardController.clearAllPassiveMatches -= ClearAllPassiveMatchesHandler;
+    }    
 }
+
