@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-[System.Serializable]
+
 public enum TileName
 {
     Milk = 0,
@@ -14,6 +14,13 @@ public enum TileName
     Vegetable = 4,
     Coconut = 5,
     Flower = 6
+}
+
+[System.Serializable]
+public class TilesMap
+{
+    public TileName tileType;
+    public Sprite tileSprite;
 }
 
 public class GameController : MonoBehaviour
@@ -31,6 +38,8 @@ public class GameController : MonoBehaviour
     [SerializeField] public List<Sprite> characters = new List<Sprite>();
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
+    public TilesMap[] tilesMap;
+    public Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
 
     void Awake()
     {
@@ -46,6 +55,7 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        AddDict();
         ShowScore();
         TileController.onMouseUp += OnMouseUpHandler;
         TileController.onMouseDown += OnMouseDownHandler;
@@ -53,6 +63,12 @@ public class GameController : MonoBehaviour
         BoardController.clearAllPassiveMatches += ClearAllPassiveMatchesHandler;
         CreateBoard();
         boardControllerObject.DetectMatchExist(boardControllerObject.MatchableTiles());
+    }
+
+    void AddDict()
+    {
+        foreach (var _sprite in tilesMap)
+            spriteDict.Add(_sprite.tileType, _sprite.tileSprite);
     }
 
     private void CreateBoard()
@@ -574,4 +590,5 @@ public class GameController : MonoBehaviour
         BoardController.clearAllPassiveMatches -= ClearAllPassiveMatchesHandler;
     }    
 }
+
 
