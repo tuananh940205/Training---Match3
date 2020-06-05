@@ -30,7 +30,6 @@ public class BoardController : MonoBehaviour
         tiles = new TileController[row, column];
         tile = _tile;
         tileNames = _tileNames;
-        
 
         // tile = Resources.Load()
         for (int y = 0; y < column; y++)
@@ -178,8 +177,6 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x, y + 1].gameObject);
                         listCanBeMatch.Add(tiles[x + 1, y + 2].gameObject);
                     }
-
-
                 }
 
                 if (x < row - 2 && y < column - 1)
