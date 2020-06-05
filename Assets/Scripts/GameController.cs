@@ -15,30 +15,31 @@ public enum TileName
     Flower = 6
 }
 
-[System.Serializable]
-public class TilesMap
-{
-    public TileName tileType;
-    public Sprite tileSprite;
-}
+// [System.Serializable]
+// public class TilesMap
+// {
+//     public TileName tileType;
+//     public Sprite tileSprite;
+// }
 
 public class GameController : MonoBehaviour
 {
-    public static GameController Instance;
-    public Text scoreText;
-    public int score {get; private set;}
-    public TileController firstTile = null;
-    public TileController secondTile = null;
-    public Vector2 offset {get; private set;}
-    [SerializeField] public GameObject tile;
-    public int rowLength { get { return 8; } }
-    public int columnLength {get { return 10;} }
-    public Vector2 startPosition = new Vector2(-2.61f, 3.5f);
-    [SerializeField] public List<Sprite> characters = new List<Sprite>();
+    private static GameController Instance;
+    [SerializeField] private Text scoreText;
+    private int score;
+    private TileController firstTile = null;
+    private TileController secondTile = null;
+    private Vector2 offset {get; set;}
+    [SerializeField] private GameObject tile;
+    private int rowLength = 8;
+    private int columnLength = 10;
+    private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
-    public TilesMap[] tilesMap;
-    public Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
+    [SerializeField] private List<Sprite> sprites;
+    private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
+    [SerializeField] private List<TileName> tileNames;
+
 
     void Awake()
     {
@@ -50,15 +51,15 @@ public class GameController : MonoBehaviour
         Instance = GetComponent<GameController>();
 
         offset = tile.GetComponent<SpriteRenderer>().bounds.size;
+        AddDict(sprites, spriteDict);
     }
 
     private void Start()
     {
-        AddDict();
         ShowScore();
         AddEvent();
         CreateBoard();
-        boardControllerObject.DetectMatchExist(boardControllerObject.MatchableTiles());
+        DetectMatchExist();
     }
 
     void AddEvent()
@@ -69,15 +70,22 @@ public class GameController : MonoBehaviour
         BoardController.clearAllPassiveMatches += ClearAllPassiveMatchesHandler;
     }
 
-    void AddDict()
+    void DetectMatchExist()
     {
-        foreach (var _sprite in tilesMap)
-            spriteDict.Add(_sprite.tileType, _sprite.tileSprite);
+        boardControllerObject.DetectMatchExist(boardControllerObject.MatchableTiles());
+    }
+
+    void AddDict(List<Sprite> spriteList, Dictionary<TileName, Sprite> tileSpriteDict)
+    {
+        for(int i = 0; i < spriteList.Count; i++)
+        {
+            tileSpriteDict.Add(tileNames[i], sprites[i]);
+        }
     }
 
     private void CreateBoard()
     {
-        boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, characters, tile, spriteDict);
+        boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict);
     }
 
     private void OnMouseUpHandler(Vector2 pos1, Vector2 pos2)
@@ -92,18 +100,6 @@ public class GameController : MonoBehaviour
         firstTile = tile;
     }
 
-    // void TilesFaded(List<TileController> tilesList)
-    // {
-    //     int temp = tilesList.Count;
-    //     foreach (var tile in tilesList)
-    //     {
-    //         tile.SpriteRenderer.DOFade(0, 0.5f).
-    //             OnComplete(() => temp--).
-    //             OnComplete(() => ResetColorAndFillBoard(tilesList, temp));
-            
-    //     }
-    // }
-
     void ResetColorAndFillBoard(List<TileController> tilesList, int value)
     {
         if (value == 0)
@@ -116,7 +112,7 @@ public class GameController : MonoBehaviour
             }
             firstTile = null;
             secondTile = null;
-            boardControllerObject.OnBoardFilled(characters, startPosition, offset, coroutineMap);
+            boardControllerObject.OnBoardFilled(sprites, startPosition, offset, coroutineMap);
         }
     }
 
@@ -137,7 +133,7 @@ public class GameController : MonoBehaviour
         }
         firstTile = null;
         secondTile = null;
-        boardControllerObject.OnBoardFilled(characters, startPosition, offset, coroutineMap);
+        boardControllerObject.OnBoardFilled(sprites, startPosition, offset, coroutineMap);
     }
 
     private void OnScoreChanged()
@@ -160,7 +156,6 @@ public class GameController : MonoBehaviour
                     {
                         if (!passivelyClearTileList.Contains(tilesList[x, y]))
                         {
-
                             foreach (var tile in FindMatchesPassivelyHandler(tilesList[x, y], x, y, tilesList))
                             {
                                 if (!passivelyClearTileList.Contains(tile))
@@ -594,5 +589,3 @@ public class GameController : MonoBehaviour
         BoardController.clearAllPassiveMatches -= ClearAllPassiveMatchesHandler;
     }    
 }
-
-

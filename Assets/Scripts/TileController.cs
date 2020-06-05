@@ -21,7 +21,7 @@ public class TileController : MonoBehaviour
     void OnMouseDown()
     {
         //Debug.LogFormat("OnMouseDown");
-        //Debug.LogFormat("OnMouseDown != mull");
+        //Debug.LogFormat("OnMouseDown != null");
         onMouseDown?.Invoke(this);
 
         firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -42,4 +42,3 @@ public class TileController : MonoBehaviour
         onMouseUp?.Invoke(firstPosition, lastPosition);
     }
 }
-

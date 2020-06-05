@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class BoardController : MonoBehaviour
 {
@@ -11,26 +12,27 @@ public class BoardController : MonoBehaviour
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     private Vector2 offset;
     private GameObject tile;
-    private List<Sprite> characters;
+    private  List<TileName> tileNames;
     public delegate List<TileController> FindMatchesPassivelyEvent(TileController tile, int indexX, int indexY, TileController[,] tilesArray);
     public static FindMatchesPassivelyEvent findMatchesPassively;
     public delegate void ClearAllPassiveMatchesEvent(List<TileController> listGo, TileController[,] tilesArray);
     public static ClearAllPassiveMatchesEvent clearAllPassiveMatches;
-    private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
+    public Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
 
     // Create board
-    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, List<Sprite> _characters, GameObject _tile, Dictionary<TileName, Sprite> _spriteDict)
+    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, List<TileName> _tileNames, Dictionary<TileName, Sprite> _spriteDict)
     {
+        spriteDict = _spriteDict;
         row = _row;
         column = _column;
         startPosition = _startPosition;
         offset = _offset;
-        characters = _characters;
         tiles = new TileController[row, column];
         tile = _tile;
-        spriteDict = _spriteDict;
+        tileNames = _tileNames;
+        
 
-       // tile = Resources.Load()
+        // tile = Resources.Load()
         for (int y = 0; y < column; y++)
         {
             for (int x = 0; x < row; x++)
@@ -40,18 +42,19 @@ public class BoardController : MonoBehaviour
                 newTile.name = "[ " + x + " , " + y + " ]";
                 tiles[x, y].transform.parent = transform;
 
-                List<Sprite> possibleCharacters = new List<Sprite>();
-                possibleCharacters.AddRange(characters);
-
+                List<TileName> listTileName = new List<TileName>();
+                listTileName.AddRange(tileNames);
                 if (x > 0)
                     if (tiles[x - 1, y] != null)
-                        possibleCharacters.Remove(tiles[x - 1, y].SpriteRenderer.sprite);
+                        listTileName.Remove(tiles[x - 1, y].tileName);
                 if (y > 0)
                     if (tiles[x, y - 1] != null)
-                        possibleCharacters.Remove(tiles[x, y - 1].SpriteRenderer.sprite);
+                        listTileName.Remove(tiles[x, y - 1].tileName);
 
-                Sprite newSprite = possibleCharacters[Random.Range(0, possibleCharacters.Count)];
-                newTile.GetComponent<SpriteRenderer>().sprite = newSprite;
+                TileName tileName = listTileName[Random.Range(0, listTileName.Count)];
+                // Debug.LogFormat("x = {0}, y = {1}, tilesNames count = {2}", x, y , listTileName.Count);
+                tiles[x, y].tileName = tileName;
+                tiles[x, y].SpriteRenderer.sprite = spriteDict[tileName];
             }
         }
     }    
