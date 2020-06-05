@@ -16,9 +16,10 @@ public class BoardController : MonoBehaviour
     public static FindMatchesPassivelyEvent findMatchesPassively;
     public delegate void ClearAllPassiveMatchesEvent(List<TileController> listGo, TileController[,] tilesArray);
     public static ClearAllPassiveMatchesEvent clearAllPassiveMatches;
+    private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
 
     // Create board
-    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, List<Sprite> _characters, GameObject _tile)
+    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, List<Sprite> _characters, GameObject _tile, Dictionary<TileName, Sprite> _spriteDict)
     {
         row = _row;
         column = _column;
@@ -27,6 +28,7 @@ public class BoardController : MonoBehaviour
         characters = _characters;
         tiles = new TileController[row, column];
         tile = _tile;
+        spriteDict = _spriteDict;
 
        // tile = Resources.Load()
         for (int y = 0; y < column; y++)

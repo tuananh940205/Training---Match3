@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-
 public enum TileName
 {
     Milk = 0,
@@ -57,12 +56,17 @@ public class GameController : MonoBehaviour
     {
         AddDict();
         ShowScore();
+        AddEvent();
+        CreateBoard();
+        boardControllerObject.DetectMatchExist(boardControllerObject.MatchableTiles());
+    }
+
+    void AddEvent()
+    {
         TileController.onMouseUp += OnMouseUpHandler;
         TileController.onMouseDown += OnMouseDownHandler;
         BoardController.findMatchesPassively += FindMatchesPassivelyHandler;
         BoardController.clearAllPassiveMatches += ClearAllPassiveMatchesHandler;
-        CreateBoard();
-        boardControllerObject.DetectMatchExist(boardControllerObject.MatchableTiles());
     }
 
     void AddDict()
@@ -73,7 +77,7 @@ public class GameController : MonoBehaviour
 
     private void CreateBoard()
     {
-        boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, characters, tile);
+        boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, characters, tile, spriteDict);
     }
 
     private void OnMouseUpHandler(Vector2 pos1, Vector2 pos2)
