@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public enum TileName
 {
@@ -36,11 +37,12 @@ public class GameController : MonoBehaviour
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
+    [SerializeField] private GameUIController gameUIControllerObject;
     [SerializeField] private List<Sprite> sprites;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
     [SerializeField] private List<TileName> tileNames;
     [SerializeField] private GameObject fadeScreen;
-
+    [SerializeField] int sceneIndex;
 
     void Awake()
     {
@@ -50,18 +52,22 @@ public class GameController : MonoBehaviour
             return;
         }
         Instance = GetComponent<GameController>();
-
-        offset = tile.GetComponent<SpriteRenderer>().bounds.size;
-        AddDict();
+        DontDestroyOnLoad(this.gameObject);
+        AddEvent();
+        
+        
     }
 
     private void Start()
     {
+        offset = tile.GetComponent<SpriteRenderer>().bounds.size;
+        AddDict();
         ShowScore();
-        AddEvent();
+        
         CreateBoard();
         DetectMatchExist();
     }
+    
 
     void AddEvent()
     {
@@ -75,6 +81,7 @@ public class GameController : MonoBehaviour
     {
         boardControllerObject.DetectMatchExist(boardControllerObject.MatchableTiles());
     }
+
 
     void AddDict()
     {
