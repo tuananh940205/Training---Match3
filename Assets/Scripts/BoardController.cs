@@ -5,7 +5,7 @@ using UnityEngine;
 public class BoardController : MonoBehaviour
 {
     public TileController[,] tiles { get; private set; }
-    private List<Sprite> listSwapContainer = new List<Sprite>();
+    private List<TileName> listSwapContainer = new List<TileName>();
     private int row, column;
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     private Vector2 offset;
@@ -257,7 +257,7 @@ public class BoardController : MonoBehaviour
         {
             for (int x = 0; x < row; x++)
             {
-                listSwapContainer.Add(tiles[x, y].SpriteRenderer.sprite);
+                listSwapContainer.Add(tiles[x, y].tileName);
             }
         }
 
@@ -265,8 +265,8 @@ public class BoardController : MonoBehaviour
         {
             for (int x = 0; x < row; x++)
             {
-                Sprite go = listSwapContainer[Random.Range(0, listSwapContainer.Count)];
-                tiles[x, y].SpriteRenderer.sprite = go;
+                TileName go = listSwapContainer[Random.Range(0, listSwapContainer.Count)];
+                tiles[x, y].SpriteRenderer.sprite = spriteDict[go];
                 listSwapContainer.Remove(go);
             }
         }

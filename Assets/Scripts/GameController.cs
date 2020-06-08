@@ -27,7 +27,9 @@ public class GameController : MonoBehaviour
 {
     private static GameController Instance;
     [SerializeField] private Text scoreText;
+    [SerializeField] private Text counterText;
     private int score;
+    private int counter;
     private TileController firstTile = null;
     private TileController secondTile = null;
     private Vector2 offset {get; set;}
@@ -62,7 +64,7 @@ public class GameController : MonoBehaviour
     {
         offset = tile.GetComponent<SpriteRenderer>().bounds.size;
         AddDict();
-        ShowScore();
+        ShowScoreAndCounter();
         
         CreateBoard();
         DetectMatchExist();
@@ -328,10 +330,12 @@ public class GameController : MonoBehaviour
         return totalList;
     }
 
-    private void ShowScore()
+    private void ShowScoreAndCounter()
     {
         score = 0;
+        counter = 50;
         scoreText.text = "Score: " + score.ToString();
+        counterText.text = counter.ToString();
     }
 
     public bool GetTheAdjacentTile(float radiant, int xIndex, int yIndex, TileController[,] tilesList)
@@ -424,7 +428,16 @@ public class GameController : MonoBehaviour
         // Debug.LogFormat("HandleSwappingTileFinalSteps");
         // Debug.LogFormat("listCount = {0}", tilesList.Count);
         if (tilesList.Count > 2)
-            StartCoroutine(AllTilesFadeOut(tilesList));
+        {
+            if (counter > 0)
+            {
+                counter--;
+                counterText.text = counter.ToString();
+                StartCoroutine(AllTilesFadeOut(tilesList));
+            }
+            
+        }
+            
         else
             TileSwapBackOnMatchFailure(tile1, tile2, boardControllerObject.tiles);
     }
