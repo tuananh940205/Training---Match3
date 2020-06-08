@@ -157,7 +157,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000030518, y: -153.1}
+  m_AnchoredPosition: {x: 0.000030518, y: -146}
   m_SizeDelta: {x: 128.1, y: 81.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3139255
@@ -1139,16 +1139,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GUIController
       objectReference: {fileID: 0}
-    - target: {fileID: 2707192156918078694, guid: 3db7aa4d1126c4bfdb9e33d2814e6b76,
-        type: 3}
-      propertyPath: panel
-      value: 
-      objectReference: {fileID: 1157914486}
-    - target: {fileID: 2707192156918078694, guid: 3db7aa4d1126c4bfdb9e33d2814e6b76,
-        type: 3}
-      propertyPath: canvas
-      value: 
-      objectReference: {fileID: 1743780520}
     - target: {fileID: 8161516604491434156, guid: 3db7aa4d1126c4bfdb9e33d2814e6b76,
         type: 3}
       propertyPath: m_LocalPosition.x

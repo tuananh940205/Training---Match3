@@ -16,20 +16,15 @@ public enum TileName
     Flower = 6
 }
 
-// [System.Serializable]
-// public class TilesMap
-// {
-//     public TileName tileType;
-//     public Sprite tileSprite;
-// }
-
 public class GameController : MonoBehaviour
 {
     private static GameController Instance;
     [SerializeField] private Text scoreText;
     [SerializeField] private Text counterText;
+    [SerializeField] private GameObject gameOverText;
+    [SerializeField] private GameObject navigateButton;
     private int score;
-    private int counter;
+    [SerializeField] public int counter;
     private TileController firstTile = null;
     private TileController secondTile = null;
     private Vector2 offset {get; set;}
@@ -54,9 +49,9 @@ public class GameController : MonoBehaviour
             return;
         }
         Instance = GetComponent<GameController>();
-        DontDestroyOnLoad(this.gameObject);
         AddEvent();
-        
+        gameOverText.SetActive(false);
+        navigateButton.SetActive(false);
         
     }
 
@@ -68,6 +63,11 @@ public class GameController : MonoBehaviour
         
         CreateBoard();
         DetectMatchExist();
+    }
+
+    void GameOverHandler(GameObject go)
+    {
+        go.SetActive(true);
     }
     
 
@@ -143,7 +143,14 @@ public class GameController : MonoBehaviour
         }
         firstTile = null;
         secondTile = null;
-        boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
+        if (counter > 0)
+            boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
+        else
+        {
+            gameOverText.SetActive(true);
+            navigateButton.SetActive(true);
+        }
+            
     }
 
     private void OnScoreChanged()
@@ -429,13 +436,9 @@ public class GameController : MonoBehaviour
         // Debug.LogFormat("listCount = {0}", tilesList.Count);
         if (tilesList.Count > 2)
         {
-            if (counter > 0)
-            {
-                counter--;
-                counterText.text = counter.ToString();
-                StartCoroutine(AllTilesFadeOut(tilesList));
-            }
-            
+            counter--;
+            counterText.text = counter.ToString();
+            StartCoroutine(AllTilesFadeOut(tilesList));
         }
             
         else

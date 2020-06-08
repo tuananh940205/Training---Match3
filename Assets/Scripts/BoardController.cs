@@ -74,7 +74,7 @@ public class BoardController : MonoBehaviour
         }
         //List<GameObject> listmatch = gameControllerObject.FindMatchesPassively(go, indexX, indexY, tiles);
         //gameControllerObject.ClearAllPassiveMatches(listmatch, tilesArray);
-    
+
         DetectMatchExist(MatchableTiles());
     }
 
@@ -266,6 +266,7 @@ public class BoardController : MonoBehaviour
             for (int x = 0; x < row; x++)
             {
                 TileName go = listSwapContainer[Random.Range(0, listSwapContainer.Count)];
+                tiles[x, y].tileName = go;
                 tiles[x, y].SpriteRenderer.sprite = spriteDict[go];
                 listSwapContainer.Remove(go);
             }
