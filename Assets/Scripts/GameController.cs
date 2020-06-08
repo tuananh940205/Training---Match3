@@ -39,6 +39,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private List<Sprite> sprites;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
     [SerializeField] private List<TileName> tileNames;
+    [SerializeField] private GameObject fadeScreen;
 
 
     void Awake()
