@@ -156,8 +156,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -342, y: 93}
-  m_SizeDelta: {x: 327.1, y: 327.1}
+  m_AnchoredPosition: {x: -646, y: 189}
+  m_SizeDelta: {x: 638, y: 638}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &10246976
 MonoBehaviour:
@@ -230,7 +230,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 63.75, y: 0}
-  m_SizeDelta: {x: 466.2, y: 131.3}
+  m_SizeDelta: {x: 891.3, y: 251}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &257706033
 MonoBehaviour:
@@ -252,18 +252,18 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 70
+    m_FontSize: 153
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 72
+    m_MaxSize: 153
     m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Score: '
+  m_Text: 'Score: 0'
 --- !u!222 &257706034
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -849,8 +849,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.7063431}
   m_AnchorMax: {x: 0, y: 0.7063431}
-  m_AnchoredPosition: {x: 19, y: 18}
-  m_SizeDelta: {x: 281.5, y: 165}
+  m_AnchoredPosition: {x: 48, y: -42}
+  m_SizeDelta: {x: 289, y: 169.4}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1249734635
 MonoBehaviour:
@@ -872,11 +872,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 61
+    m_FontSize: 133
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 72
+    m_MinSize: 1
+    m_MaxSize: 133
     m_Alignment: 5
     m_AlignByGeometry: 0
     m_RichText: 1
