@@ -21,8 +21,7 @@ public class GameController : MonoBehaviour
     private static GameController Instance;
     [SerializeField] private Text scoreText;
     [SerializeField] private Text counterText;
-    [SerializeField] private GameObject gameOverText;
-    [SerializeField] private GameObject navigateButton;
+    [SerializeField] private GameObject gameOverUI;
     private int score;
     [SerializeField] public int counter;
     private TileController firstTile = null;
@@ -34,7 +33,6 @@ public class GameController : MonoBehaviour
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
-    [SerializeField] private GameUIController gameUIControllerObject;
     [SerializeField] private List<Sprite> sprites;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
     [SerializeField] private List<TileName> tileNames;
@@ -50,8 +48,7 @@ public class GameController : MonoBehaviour
         }
         Instance = GetComponent<GameController>();
         AddEvent();
-        gameOverText.SetActive(false);
-        navigateButton.SetActive(false);
+        gameOverUI.SetActive(false);
         
     }
 
@@ -146,10 +143,7 @@ public class GameController : MonoBehaviour
         if (counter > 0)
             boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
         else
-        {
-            gameOverText.SetActive(true);
-            navigateButton.SetActive(true);
-        }
+            gameOverUI.SetActive(true);
             
     }
 

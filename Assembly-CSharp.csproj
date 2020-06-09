@@ -71,9 +71,9 @@
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
     <Compile Include="Assets\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
     <Compile Include="Assets\Scripts\BoardController.cs" />
-    <Compile Include="Assets\Scripts\DontDestroyOnLoadOnLy.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
-    <Compile Include="Assets\Scripts\GameUIController.cs" />
+    <Compile Include="Assets\Scripts\GamePlayUIController.cs" />
+    <Compile Include="Assets\Scripts\GameStartUIController.cs" />
     <Compile Include="Assets\Scripts\Test\Test06.cs" />
     <Compile Include="Assets\Scripts\Test\Test07.cs" />
     <Compile Include="Assets\Scripts\Test\Test08.cs" />
