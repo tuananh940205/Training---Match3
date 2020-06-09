@@ -10,7 +10,7 @@ public class GamePlayUIController : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    void PlayAgain()
+    public void PlayAgain()
     {
         SceneManager.LoadScene(1);
     }
