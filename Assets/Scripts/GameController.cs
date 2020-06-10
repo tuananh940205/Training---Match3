@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +17,35 @@ public enum TileName
     Flower = 6
 }
 
+
+[Serializable]
+public class Data
+{
+    public PlayerData items;
+}
+[SerializeField]
+public class PlayerData
+{
+    public LevelData level1;
+    public LevelData level2;
+    public LevelData level3;
+    public LevelData level4;
+    public LevelData level5;
+    public LevelData level6;
+    public LevelData level7;
+    public LevelData level8;
+    public LevelData level9;
+    public LevelData level10;
+}
+
+[Serializable]
+public class LevelData
+{
+    public int scoreTarget;
+    public int counter;
+    public string board;
+}
+
 public class GameController : MonoBehaviour
 {
     private static GameController Instance;
@@ -29,7 +60,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject tile;
     private int rowLength = 8;
     private int columnLength = 10;
-    private Vector2 startPosition = new Vector2(-2.61f, 3.5f);
+    private Vector2 startPosition = new Vector2(-2.61f, 3.5f - 1.7f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
     [SerializeField] private List<Sprite> sprites;
@@ -37,6 +68,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private List<TileName> tileNames;
     [SerializeField] private GameObject fadeScreen;
     [SerializeField] int sceneIndex;
+    private Dictionary <string, TileController[,]> tileBoardDictionary;
 
     void Awake()
     {

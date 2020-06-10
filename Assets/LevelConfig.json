@@ -1,52 +1,55 @@
 {
-    "Level_1": {
-        "score": 500,
-        "counter": 10,
-        "board": "board1"
-    },
-    "Level_2": {
-        "score": 900,
-        "counter": 15,
-        "board": "board2"
-    },
-    "Level_3": {
-        "score": 1500,
-        "counter": 20,
-        "board": "board3"
-    },
-    "Level_4": {
-        "score": 2200,
-        "counter": 15,
-        "board": "board4"
-    },
-    "Level_5": {
-        "score": 2800,
-        "counter": 20,
-        "board": "board5"
-    },
-    "Level_6": {
-        "score": 3800,
-        "counter": 25,
-        "board": "board6"
-    },
-    "Level_7": {
-        "score": 5000,
-        "counter": 30,
-        "board": "board7"
-    },
-    "Level_8": {
-        "score": 6500,
-        "counter": 35,
-        "board": "board8"
-    },
-    "Level_9": {
-        "score": 9000,
-        "counter": 40,
-        "board": "board9"
-    },
-    "Level_10": {
-        "score": 12000,
-        "counter": 45,
-        "board": "board10"
+    "items":
+    {
+        "level1": {
+            "scoreTarget": 500,
+            "counter": 10,
+            "board": "board1"
+        },
+        "level2": {
+            "scoreTarget": 900,
+            "counter": 15,
+            "board": "board2"
+        },
+        "level3": {
+            "scoreTarget": 1500,
+            "counter": 20,
+            "board": "board3"
+        },
+        "level4": {
+            "scoreTarget": 2200,
+            "counter": 15,
+            "board": "board4"
+        },
+        "level5": {
+            "scoreTarget": 2800,
+            "counter": 20,
+            "board": "board5"
+        },
+        "level6": {
+            "scoreTarget": 3800,
+            "counter": 25,
+            "board": "board6"
+        },
+        "level7": {
+            "scoreTarget": 5000,
+            "counter": 30,
+            "board": "board7"
+        },
+        "level8": {
+            "scoreTarget": 6500,
+            "counter": 35,
+            "board": "board8"
+        },
+        "level9": {
+            "scoreTarget": 9000,
+            "counter": 40,
+            "board": "board9"
+        },
+        "level10": {
+            "scoreTarget": 12000,
+            "counter": 45,
+            "board": "board10"
+        }
     }
 }
