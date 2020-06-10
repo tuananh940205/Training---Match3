@@ -17,43 +17,30 @@ public enum TileName
     Flower = 6
 }
 
-
-[Serializable]
-public class Data
+public enum CurrentLevel
 {
-    public PlayerData items;
-}
-[SerializeField]
-public class PlayerData
-{
-    public LevelData level1;
-    public LevelData level2;
-    public LevelData level3;
-    public LevelData level4;
-    public LevelData level5;
-    public LevelData level6;
-    public LevelData level7;
-    public LevelData level8;
-    public LevelData level9;
-    public LevelData level10;
-}
-
-[Serializable]
-public class LevelData
-{
-    public int scoreTarget;
-    public int counter;
-    public string board;
+    level1,
+    level2,
+    level3,
+    level4,
+    level5,
+    level6,
+    level7,
+    level8,
+    level9,
+    level10,
 }
 
 public class GameController : MonoBehaviour
 {
     private static GameController Instance;
     [SerializeField] private Text scoreText;
+    [SerializeField] private Text scoreRequireText;
     [SerializeField] private Text counterText;
     [SerializeField] private GameObject gameOverUI;
     private int score;
-    [SerializeField] public int counter;
+    [SerializeField] private int counter;
+    private int scoreTarget;
     private TileController firstTile = null;
     private TileController secondTile = null;
     private Vector2 offset {get; set;}
@@ -66,39 +53,54 @@ public class GameController : MonoBehaviour
     [SerializeField] private List<Sprite> sprites;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
     [SerializeField] private List<TileName> tileNames;
-    [SerializeField] private GameObject fadeScreen;
-    [SerializeField] int sceneIndex;
     private Dictionary <string, TileController[,]> tileBoardDictionary;
+    private Dictionary <int, LevelData> levelDict;
+    PlayerData playerData;
+    private string jsonData;
+    private CurrentLevel currentLevel;
+    
 
     void Awake()
     {
+        playerData = new PlayerData();
         if (Instance != null)
         {
             Destroy(gameObject);
             return;
         }
         Instance = GetComponent<GameController>();
-        AddEvent();
-        gameOverUI.SetActive(false);
+        
+        
         
     }
 
-    private void Start()
+    void Start()
     {
+        gameOverUI.SetActive(false);
         offset = tile.GetComponent<SpriteRenderer>().bounds.size;
+        AddEvent();
+        
+
+        StartLevel();
         AddDict();
+
         ShowScoreAndCounter();
         
-        CreateBoard();
+        CreateBoardWayDefault();
         DetectMatchExist();
+        
     }
 
-    void GameOverHandler(GameObject go)
+    void StartLevel()
     {
-        go.SetActive(true);
+        currentLevel = CurrentLevel.level1;
+        jsonData = File.ReadAllText(Application.dataPath + "/Data/LevelConfig.json");
+        // Debug.LogFormat("Fileadded");
+        Data data = JsonUtility.FromJson<Data>(jsonData);
+        // Debug.Log("construct data value");
+        scoreTarget = data.items.level1.scoreTarget;
+        counter = data.items.level1.counter;
     }
-    
-
     void AddEvent()
     {
         TileController.onMouseUp += OnMouseUpHandler;
@@ -119,9 +121,19 @@ public class GameController : MonoBehaviour
         {
             spriteDict.Add(tileNames[i], sprites[i]);
         }
+        // levelDict.Add(0, playerData.level1);
+        // levelDict.Add(1, playerData.level2);
+        // levelDict.Add(2, playerData.level3);
+        // levelDict.Add(3, playerData.level4);
+        // levelDict.Add(4, playerData.level5);
+        // levelDict.Add(5, playerData.level6);
+        // levelDict.Add(6, playerData.level7);
+        // levelDict.Add(7, playerData.level8);
+        // levelDict.Add(8, playerData.level9);
+        // levelDict.Add(9, playerData.level10);
     }
 
-    private void CreateBoard()
+    private void CreateBoardWayDefault()
     {
         boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict);
     }
@@ -171,10 +183,22 @@ public class GameController : MonoBehaviour
         }
         firstTile = null;
         secondTile = null;
+
+        if (score >= scoreTarget)
+        {
+            Time.timeScale = 0;
+            Debug.LogFormat("LevelComplete");
+        }
+            
+
         if (counter > 0)
             boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
         else
-            gameOverUI.SetActive(true);
+        {
+            if (score < scoreTarget)
+                gameOverUI.SetActive(true);
+        }
+            
             
     }
 
@@ -365,7 +389,8 @@ public class GameController : MonoBehaviour
     private void ShowScoreAndCounter()
     {
         score = 0;
-        counter = 50;
+        // counter = 50;
+        scoreRequireText.text = "Target Score: " + scoreTarget.ToString();
         scoreText.text = "Score: " + score.ToString();
         counterText.text = counter.ToString();
     }
@@ -618,5 +643,10 @@ public class GameController : MonoBehaviour
         TileController.onMouseDown -= OnMouseDownHandler;
         BoardController.findMatchesPassively -= FindMatchesPassivelyHandler;
         BoardController.clearAllPassiveMatches -= ClearAllPassiveMatchesHandler;
-    }    
+    }
+
+    void GenerateBoardHandler(CurrentLevel currentLv)
+    {
+        
+    }
 }

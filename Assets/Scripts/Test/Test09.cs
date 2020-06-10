@@ -25,8 +25,8 @@ public class DataThree
 }
 public class Test09 : MonoBehaviour
 {
-    private int score;
-    private int counter;
+    [SerializeField] private int score;
+    [SerializeField] private int counter;
     void Start()
     {
         string jsonData = File.ReadAllText(Application.dataPath + "/Scripts/Test/Test01.json");
