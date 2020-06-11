@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public enum TileName
 {
@@ -69,9 +70,6 @@ public class GameController : MonoBehaviour
             return;
         }
         Instance = GetComponent<GameController>();
-        
-        
-        
     }
 
     void Start()
@@ -88,6 +86,15 @@ public class GameController : MonoBehaviour
         
         CreateBoardWayDefault();
         DetectMatchExist();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            SceneManager.LoadScene(1);
+        }
+
         
     }
 
@@ -647,6 +654,43 @@ public class GameController : MonoBehaviour
 
     void GenerateBoardHandler(CurrentLevel currentLv)
     {
-        
+        switch (currentLevel)
+        {
+            case CurrentLevel.level1:
+                GetDataFromNextLevel(CurrentLevel.level2);
+                break;
+            case CurrentLevel.level2:
+                GetDataFromNextLevel(CurrentLevel.level3);
+                break;
+            case CurrentLevel.level3:
+                GetDataFromNextLevel(CurrentLevel.level4);
+                break;
+            case CurrentLevel.level4:
+                GetDataFromNextLevel(CurrentLevel.level5);
+                break;
+            case CurrentLevel.level5:
+                GetDataFromNextLevel(CurrentLevel.level6);
+                break;
+            case CurrentLevel.level6:
+                GetDataFromNextLevel(CurrentLevel.level7);
+                break;
+            case CurrentLevel.level7:
+                GetDataFromNextLevel(CurrentLevel.level8);
+                break;
+            case CurrentLevel.level8:
+                GetDataFromNextLevel(CurrentLevel.level9);
+                break;
+            case CurrentLevel.level9:
+                GetDataFromNextLevel(CurrentLevel.level10);
+                break;
+            case CurrentLevel.level10:
+                Debug.LogFormat("EndGame");
+                break;
+        }
+    }
+
+    void GetDataFromNextLevel(CurrentLevel level)
+    {
+
     }
 }
