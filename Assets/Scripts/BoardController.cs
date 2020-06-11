@@ -16,7 +16,7 @@ public class BoardController : MonoBehaviour
     public delegate void ClearAllPassiveMatchesEvent(List<TileController> listGo, TileController[,] tilesArray);
     public static ClearAllPassiveMatchesEvent clearAllPassiveMatches;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
- 
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -32,7 +32,7 @@ public class BoardController : MonoBehaviour
             Debug.Log(text);
         }
     }
- 
+
     // Create board
     public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, List<TileName> _tileNames, Dictionary<TileName, Sprite> _spriteDict)
     {
@@ -44,7 +44,7 @@ public class BoardController : MonoBehaviour
         tiles = new TileController[row, column];
         tile = _tile;
         tileNames = _tileNames;
- 
+
         // tile = Resources.Load()
         for (int y = 0; y < column; y++)
         {
@@ -54,7 +54,7 @@ public class BoardController : MonoBehaviour
                 tiles[x, y] = newTile.GetComponent<TileController>();
                 newTile.name = "[ " + x + " , " + y + " ]";
                 tiles[x, y].transform.parent = transform;
- 
+
                 List<TileName> listTileName = new List<TileName>();
                 listTileName.AddRange(tileNames);
  
