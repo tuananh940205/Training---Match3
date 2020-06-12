@@ -1,0 +1,68 @@
+{
+    "items":
+    {
+        "Levels":
+        [
+            {
+                "level": 1,
+                "scoreTarget": 1200,
+                "counter": 10,
+                "board": "board1"
+            },
+            {
+                "level": 2,
+                "scoreTarget": 2000,
+                "counter": 15,
+                "board": "board2"
+            },
+            {
+                "level": 3,
+                "scoreTarget": 1500,
+                "counter": 20,
+                "board": "board3"
+            },
+            {
+                "level": 4,
+                "scoreTarget": 2200,
+                "counter": 15,
+                "board": "board4"
+            },
+            {
+                "level": 5,
+                "scoreTarget": 2800,
+                "counter": 20,
+                "board": "board5"
+            },
+            {
+                "level": 6,
+                "scoreTarget": 3800,
+                "counter": 25,
+                "board": "board6"
+            },
+            {
+                "level": 7,
+                "scoreTarget": 5000,
+                "counter": 30,
+                "board": "board7"
+            },
+            {
+                "level": 8,
+                "scoreTarget": 6500,
+                "counter": 35,
+                "board": "board8"
+            },
+            {
+                "level": 9,
+                "scoreTarget": 9000,
+                "counter": 40,
+                "board": "board9"
+            },
+            {
+                "level": 10,
+                "scoreTarget": 12000,
+                "counter": 45,
+                "board": "board10"
+            }
+        ]
+    }
+}
