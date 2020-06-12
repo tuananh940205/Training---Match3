@@ -85,6 +85,7 @@
     <Compile Include="Assets\Scripts\Test\TestThreeTile.cs" />
     <Compile Include="Assets\Scripts\Test\TestTwo.cs" />
     <Compile Include="Assets\Scripts\TileController.cs" />
+    <None Include="Assets\Resources\BoardData.txt" />
     <None Include="Assets\Demigiant\DOTween\readme.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>/Users/sgs/Unity Projects/RepositoryProjects/Training---Match3/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

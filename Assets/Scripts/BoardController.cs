@@ -25,9 +25,7 @@ public class BoardController : MonoBehaviour
             for (int y = 0; y < column; y++)
             {
                 for (int x = 0; x < row; x++)
-                {
                     text = text + tiles[x, y].name + " ";
-                }
             }
             Debug.Log(text);
         }

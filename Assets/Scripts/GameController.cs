@@ -50,36 +50,39 @@ public class GameController : MonoBehaviour
     private int columnLength = 10;
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f - 1.7f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
+    [SerializeField] private CurrentLevel currentLevel;
     [SerializeField] private BoardController boardControllerObject;
     [SerializeField] private List<Sprite> sprites;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
     [SerializeField] private List<TileName> tileNames;
     private Dictionary <string, TileController[,]> tileBoardDictionary;
-    private Dictionary <int, LevelData> levelDict;
-    PlayerData playerData;
+    public Data data;
     private string jsonData;
-    private CurrentLevel currentLevel;
+    Dictionary <int, TileName> intTileNameDict = new Dictionary<int, TileName>();
     
-
     void Awake()
     {
-        playerData = new PlayerData();
+        // data = new Data();
         if (Instance != null)
         {
             Destroy(gameObject);
             return;
         }
         Instance = GetComponent<GameController>();
+
+        // Test methods
+        Debug.LogFormat("GetEnumTest: {0}", (int)TileName.Flower);
+        
+        
+        
     }
 
     void Start()
     {
+        StartLevel();
         gameOverUI.SetActive(false);
         offset = tile.GetComponent<SpriteRenderer>().bounds.size;
         AddEvent();
-        
-
-        StartLevel();
         AddDict();
 
         ShowScoreAndCounter();
@@ -91,22 +94,22 @@ public class GameController : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.S))
-        {
             SceneManager.LoadScene(1);
-        }
-
-        
     }
 
     void StartLevel()
     {
-        currentLevel = CurrentLevel.level1;
-        jsonData = File.ReadAllText(Application.dataPath + "/Data/LevelConfig.json");
-        // Debug.LogFormat("Fileadded");
-        Data data = JsonUtility.FromJson<Data>(jsonData);
-        // Debug.Log("construct data value");
-        scoreTarget = data.items.level1.scoreTarget;
-        counter = data.items.level1.counter;
+        TextAsset asset = Resources.Load("LevelConfig") as TextAsset;
+        
+        if (asset != null)
+        {
+            data = JsonUtility.FromJson<Data>(asset.text);
+
+            scoreTarget = data.items.levels[0].scoreTarget;
+            counter = data.items.levels[0].counter;
+        }
+        else
+            Debug.Log("Asset is null");
     }
     void AddEvent()
     {
@@ -125,19 +128,7 @@ public class GameController : MonoBehaviour
     void AddDict()
     {
         for(int i = 0; i < sprites.Count; i++)
-        {
             spriteDict.Add(tileNames[i], sprites[i]);
-        }
-        // levelDict.Add(0, playerData.level1);
-        // levelDict.Add(1, playerData.level2);
-        // levelDict.Add(2, playerData.level3);
-        // levelDict.Add(3, playerData.level4);
-        // levelDict.Add(4, playerData.level5);
-        // levelDict.Add(5, playerData.level6);
-        // levelDict.Add(6, playerData.level7);
-        // levelDict.Add(7, playerData.level8);
-        // levelDict.Add(8, playerData.level9);
-        // levelDict.Add(9, playerData.level10);
     }
 
     private void CreateBoardWayDefault()
@@ -196,17 +187,14 @@ public class GameController : MonoBehaviour
             Time.timeScale = 0;
             Debug.LogFormat("LevelComplete");
         }
-            
-
-        if (counter > 0)
-            boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
         else
         {
-            if (score < scoreTarget)
-                gameOverUI.SetActive(true);
+            if (counter > 0)
+                boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
+            else
+                if (score < scoreTarget)
+                    gameOverUI.SetActive(true);
         }
-            
-            
     }
 
     private void OnScoreChanged()
