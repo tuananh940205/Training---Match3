@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public class Data
@@ -19,4 +20,13 @@ public class LevelData
     public int scoreTarget;
     public int counter;
     public int[] board;
+    // public TileData[] tileData;
+}
+
+[Serializable]
+public class TileData
+{
+    Vector2 tilePos;
+    Sprite sprite;
+    TileName tileName;
 }

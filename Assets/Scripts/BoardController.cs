@@ -58,12 +58,12 @@ public class BoardController : MonoBehaviour
 
                 List<TileName> listTileName = new List<TileName>();
                 listTileName.AddRange(tileNames);
- 
+
                 if (x > 0)
                         listTileName.Remove(tiles[x - 1, y].tileName);
                 if (y > 0)
                         listTileName.Remove(tiles[x, y - 1].tileName);
- 
+
                 TileName tileName = listTileName[Random.Range(0, listTileName.Count)];
                 // Debug.LogFormat("x = {0}, y = {1}, tilesNames count = {2}", x, y , listTileName.Count);
                 tiles[x, y].tileName = tileName;
@@ -158,7 +158,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x, y + 2]);
                         listCanBeMatch.Add(tiles[x, y + 3]);
                     }
- 
+
                     if (tiles[x, y].tileName == tiles[x, y + 1].tileName &&
                         tiles[x, y].tileName == tiles[x, y + 3].tileName)
                     {
@@ -167,7 +167,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x, y + 3]);
                     }
                 }
- 
+
                 if (x < row - 3)
                 {
                     if (tiles[x, y].tileName == tiles[x + 2, y].tileName &&
@@ -177,7 +177,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x + 2, y]);
                         listCanBeMatch.Add(tiles[x + 3, y]);
                     }
- 
+
                     if (tiles[x, y].tileName == tiles[x + 1, y].tileName &&
                         tiles[x, y].tileName == tiles[x + 3, y].tileName)
                     {
@@ -186,7 +186,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x + 3, y]);
                     }
                 }
- 
+
                 // new write method
                 if (x < row - 1 && y < column - 2)
                 {
@@ -197,7 +197,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x + 1, y + 1]);
                         listCanBeMatch.Add(tiles[x, y + 2]);
                     }
- 
+
                     if (tiles[x + 1, y].tileName == tiles[x, y + 1].tileName &&
                         tiles[x + 1, y].tileName == tiles[x + 1, y + 2].tileName)
                     {
@@ -205,7 +205,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x, y + 1]);
                         listCanBeMatch.Add(tiles[x + 1, y + 2]);
                     }
- 
+
                     if (tiles[x, y].tileName == tiles[x + 1, y + 1].tileName &&
                         tiles[x, y].tileName == tiles[x + 1, y + 2].tileName)
                     {
@@ -213,7 +213,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x + 1, y + 1]);
                         listCanBeMatch.Add(tiles[x + 1, y + 2]);
                     }
- 
+
                     if (tiles[x + 1, y].tileName == tiles[x, y + 1].tileName &&
                         tiles[x + 1, y].tileName == tiles[x, y + 2].tileName)
                     {
@@ -221,7 +221,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x, y + 1]);
                         listCanBeMatch.Add(tiles[x, y + 2]);
                     }
- 
+
                     if (tiles[x + 1, y].tileName == tiles[x + 1, y + 1].tileName &&
                         tiles[x + 1, y].tileName == tiles[x, y + 2].tileName)
                     {
@@ -229,7 +229,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x + 1, y + 1]);
                         listCanBeMatch.Add(tiles[x, y + 2]);
                     }
- 
+
                     if (tiles[x, y].tileName == tiles[x, y + 1].tileName &&
                         tiles[x, y].tileName == tiles[x + 1, y + 2].tileName)
                     {
@@ -238,7 +238,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x + 1, y + 2]);
                     }
                 }
- 
+
                 if (x < row - 2 && y < column - 1)
                 {
                     if (tiles[x, y].tileName == tiles[x + 1, y + 1].tileName &&
@@ -248,7 +248,7 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x, y]);
                         listCanBeMatch.Add(tiles[x + 2, y + 1]);
                     }
- 
+
                     if (tiles[x, y + 1].tileName == tiles[x + 1, y + 1].tileName &&
                         tiles[x, y + 1].tileName == tiles[x + 2, y].tileName)
                     {
@@ -256,9 +256,9 @@ public class BoardController : MonoBehaviour
                         listCanBeMatch.Add(tiles[x + 1, y + 1]);
                         listCanBeMatch.Add(tiles[x + 2, y]);
                     }
- 
- 
- 
+
+
+
                     if (tiles[x, y + 1].tileName == tiles[x + 1, y].tileName &&
                         tiles[x, y + 1].tileName == tiles[x + 2, y].tileName)
                     {
