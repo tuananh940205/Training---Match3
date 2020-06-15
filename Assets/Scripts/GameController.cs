@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,20 +16,6 @@ public enum TileName
     Flower = 6
 }
 
-public enum CurrentLevel
-{
-    level1,
-    level2,
-    level3,
-    level4,
-    level5,
-    level6,
-    level7,
-    level8,
-    level9,
-    level10,
-}
-
 public class GameController : MonoBehaviour
 {
     private static GameController Instance;
@@ -39,7 +23,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private Text scoreRequireText;
     [SerializeField] private Text counterText;
     [SerializeField] private GameObject gameOverUI;
-    private int score;
+    [SerializeField] private Text levelText;
+    [SerializeField]private int score;
     [SerializeField] private int counter;
     private int scoreTarget;
     private TileController firstTile = null;
@@ -50,7 +35,6 @@ public class GameController : MonoBehaviour
     private int columnLength = 10;
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f - 1.7f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
-    [SerializeField] private CurrentLevel currentLevel;
     [SerializeField] private BoardController boardControllerObject;
     [SerializeField] private List<Sprite> sprites;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
@@ -58,7 +42,9 @@ public class GameController : MonoBehaviour
     private Dictionary <string, TileController[,]> tileBoardDictionary;
     public Data data;
     private string jsonData;
-    Dictionary <int, TileName> intTileNameDict = new Dictionary<int, TileName>();
+    private Dictionary <int, TileName> intTileNameDict = new Dictionary<int, TileName>();
+    private int[] tileIntNumberList;
+    private int level;
     
     void Awake()
     {
@@ -69,25 +55,21 @@ public class GameController : MonoBehaviour
             return;
         }
         Instance = GetComponent<GameController>();
+        offset = tile.GetComponent<SpriteRenderer>().bounds.size;
 
         // Test methods
-        Debug.LogFormat("GetEnumTest: {0}", (int)TileName.Flower);
-        
-        
-        
+        //Debug.LogFormat("GetEnumTest: {0}", (int)TileName.Flower);
     }
 
     void Start()
     {
         StartLevel();
         gameOverUI.SetActive(false);
-        offset = tile.GetComponent<SpriteRenderer>().bounds.size;
+        
         AddEvent();
         AddDict();
 
-        ShowScoreAndCounter();
-        
-        CreateBoardWayDefault();
+        CreateBoard();
         DetectMatchExist();
     }
 
@@ -99,17 +81,47 @@ public class GameController : MonoBehaviour
 
     void StartLevel()
     {
+        level = 0;
+        levelText.text = "Level " + (level + 1);
+        SetDictionaryData();
+
         TextAsset asset = Resources.Load("LevelConfig") as TextAsset;
         
         if (asset != null)
         {
             data = JsonUtility.FromJson<Data>(asset.text);
 
-            scoreTarget = data.items.levels[0].scoreTarget;
-            counter = data.items.levels[0].counter;
+            SetLevelValue(level);
         }
         else
             Debug.Log("Asset is null");
+    }
+
+    void SetLevelValue(int levelGame)
+    {
+        Debug.LogFormat("Execute SetLevelValue");
+        score = 0;
+        scoreTarget = data.items.levels[levelGame].scoreTarget;
+        counter = data.items.levels[levelGame].counter;
+        tileIntNumberList = data.items.levels[levelGame].board;
+        Debug.LogFormat("score = {0}, scoreTarget = {1}, counter = {2}", score, scoreTarget, counter);
+        scoreRequireText.text = "Target Score: " + scoreTarget.ToString();
+        scoreText.text = "Score: " + score.ToString();
+        counterText.text = counter.ToString();
+        
+    }
+
+    void ResetBoard(int level, int[] intArray)
+    {
+        boardControllerObject.ResetBoard(level, intArray);
+    }
+
+    void SetDictionaryData()
+    {
+        for (int i = 0; i < sprites.Count; i++)
+        {
+            intTileNameDict.Add(i, (TileName)i);
+        }
     }
     void AddEvent()
     {
@@ -131,9 +143,12 @@ public class GameController : MonoBehaviour
             spriteDict.Add(tileNames[i], sprites[i]);
     }
 
-    private void CreateBoardWayDefault()
+    private void CreateBoard()
     {
-        boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict);
+        //boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict);
+        boardControllerObject.CreateBoardByLevelInfo(
+            rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict, intTileNameDict, tileIntNumberList
+            );
     }
 
     private void OnMouseUpHandler(Vector2 pos1, Vector2 pos2)
@@ -184,8 +199,14 @@ public class GameController : MonoBehaviour
 
         if (score >= scoreTarget)
         {
-            Time.timeScale = 0;
-            Debug.LogFormat("LevelComplete");
+            if (level < 9)
+            {
+                Debug.LogFormat("LevelComplete");
+                GenerateNewLevelBoard(level);
+            }
+            else
+                Debug.LogFormat("Victory");
+            
         }
         else
         {
@@ -381,15 +402,7 @@ public class GameController : MonoBehaviour
         return totalList;
     }
 
-    private void ShowScoreAndCounter()
-    {
-        score = 0;
-        // counter = 50;
-        scoreRequireText.text = "Target Score: " + scoreTarget.ToString();
-        scoreText.text = "Score: " + score.ToString();
-        counterText.text = counter.ToString();
-    }
-
+    
     public bool GetTheAdjacentTile(float radiant, int xIndex, int yIndex, TileController[,] tilesList)
     {
         bool findTheAdjacent;
@@ -640,45 +653,15 @@ public class GameController : MonoBehaviour
         BoardController.clearAllPassiveMatches -= ClearAllPassiveMatchesHandler;
     }
 
-    void GenerateBoardHandler(CurrentLevel currentLv)
+    void GenerateNewLevelBoard(int levelGame)
     {
-        switch (currentLevel)
-        {
-            case CurrentLevel.level1:
-                GetDataFromNextLevel(CurrentLevel.level2);
-                break;
-            case CurrentLevel.level2:
-                GetDataFromNextLevel(CurrentLevel.level3);
-                break;
-            case CurrentLevel.level3:
-                GetDataFromNextLevel(CurrentLevel.level4);
-                break;
-            case CurrentLevel.level4:
-                GetDataFromNextLevel(CurrentLevel.level5);
-                break;
-            case CurrentLevel.level5:
-                GetDataFromNextLevel(CurrentLevel.level6);
-                break;
-            case CurrentLevel.level6:
-                GetDataFromNextLevel(CurrentLevel.level7);
-                break;
-            case CurrentLevel.level7:
-                GetDataFromNextLevel(CurrentLevel.level8);
-                break;
-            case CurrentLevel.level8:
-                GetDataFromNextLevel(CurrentLevel.level9);
-                break;
-            case CurrentLevel.level9:
-                GetDataFromNextLevel(CurrentLevel.level10);
-                break;
-            case CurrentLevel.level10:
-                Debug.LogFormat("EndGame");
-                break;
-        }
-    }
+        level = levelGame + 1;
+        Debug.LogFormat("Generate new level {0}", level);
+        boardControllerObject.GenerateNewLevelBoard(level);
+        SetLevelValue(level);
+        ResetBoard(level, tileIntNumberList);
+        levelText.text = "Level " + (level + 1);
 
-    void GetDataFromNextLevel(CurrentLevel level)
-    {
-
+        
     }
 }

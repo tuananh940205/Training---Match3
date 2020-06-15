@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GamePlayUIController : MonoBehaviour
 {
+    [SerializeField] private BoardController boardControllerObject;
     public void BackToMainMenu()
     {
         SceneManager.LoadScene(0);
@@ -12,6 +13,6 @@ public class GamePlayUIController : MonoBehaviour
 
     public void PlayAgain()
     {
-        SceneManager.LoadScene(1);
+        Debug.LogFormat("PlayAgain");
     }
 }
