@@ -19,14 +19,31 @@ public class LevelData
     public int level;
     public int scoreTarget;
     public int counter;
-    public int[] board;
+    public BoardData[] boards;
     // public TileData[] tileData;
 }
 
+// [Serializable]
+// public class TileData
+// {
+//     Vector2 tilePos;
+//     Sprite sprite;
+//     TileName tileName;
+// }
+
 [Serializable]
-public class TileData
-{
-    Vector2 tilePos;
-    Sprite sprite;
-    TileName tileName;
+public class BoardData {
+    public int x;
+    public int y;
+    public string tileId;
+}
+
+
+
+[Serializable]
+public class TileData {
+    public string id;
+    public string spriteName;
+    public string score;
+
 }

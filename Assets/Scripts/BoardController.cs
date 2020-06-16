@@ -110,7 +110,7 @@ public class BoardController : MonoBehaviour
 
                 tiles[x, y].tileName = tileName;
                 // Get the sprite through index
-                tiles[x, y].SpriteRenderer.sprite = spriteDict[tileName];
+                tiles[x, y].SpriteRenderer.sprite = Resources.Load<Sprite>("Character/" + (int)tileName); //spriteDict[tileName];
                 newTile.name = soNguyenDaiDienChoTileTrongTuDien.ToString();
                 //TileName theTile = intTileDict[]
 

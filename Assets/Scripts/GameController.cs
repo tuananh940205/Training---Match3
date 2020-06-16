@@ -103,7 +103,7 @@ public class GameController : MonoBehaviour
         score = 0;
         scoreTarget = data.items.levels[levelGame].scoreTarget;
         counter = data.items.levels[levelGame].counter;
-        tileIntNumberList = data.items.levels[levelGame].board;
+        // tileIntNumberList = data.items.levels[levelGame].board;
         Debug.LogFormat("score = {0}, scoreTarget = {1}, counter = {2}", score, scoreTarget, counter);
         scoreRequireText.text = "Target Score: " + scoreTarget.ToString();
         scoreText.text = "Score: " + score.ToString();
@@ -114,6 +114,7 @@ public class GameController : MonoBehaviour
     void ResetBoard(int level, int[] intArray)
     {
         boardControllerObject.ResetBoard(level, intArray);
+        
     }
 
     void SetDictionaryData()
