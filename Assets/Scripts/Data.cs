@@ -32,7 +32,8 @@ public class LevelData
 // }
 
 [Serializable]
-public class BoardData {
+public class BoardData
+{
     public int x;
     public int y;
     public string tileId;
@@ -41,7 +42,8 @@ public class BoardData {
 
 
 [Serializable]
-public class TileData {
+public class TileData
+{
     public string id;
     public string spriteName;
     public string score;

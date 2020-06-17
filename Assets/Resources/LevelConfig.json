@@ -89,7 +89,6 @@
                     { "x": 5, "y": 9, "tileId":"Milk" },
                     { "x": 6, "y": 9, "tileId":"Coconut" },
                     { "x": 7, "y": 9, "tileId":"Flower" }
-
                 ]
             },
         
@@ -179,7 +178,6 @@
                     { "x": 5, "y": 9, "tileId":"Milk" },
                     { "x": 6, "y": 9, "tileId":"Orange" },
                     { "x": 7, "y": 9, "tileId":"Vegetable" }
-
                 ]
             },
         
@@ -269,7 +267,6 @@
                     { "x": 5, "y": 9, "tileId":"Milk" },
                     { "x": 6, "y": 9, "tileId":"Flower" },
                     { "x": 7, "y": 9, "tileId":"Apple" }
-
                 ]
             },
         
@@ -359,7 +356,6 @@
                     { "x": 5, "y": 9, "tileId":"Milk" },
                     { "x": 6, "y": 9, "tileId":"Flower" },
                     { "x": 7, "y": 9, "tileId":"Vegetable" }
-
                 ]
             },
         
@@ -449,7 +445,6 @@
                     { "x": 5, "y": 9, "tileId":"Orange" },
                     { "x": 6, "y": 9, "tileId":"Vegetable" },
                     { "x": 7, "y": 9, "tileId":"Milk" }
-
                 ]
             },
         
@@ -539,7 +534,6 @@
                     { "x": 5, "y": 9, "tileId":"Apple" },
                     { "x": 6, "y": 9, "tileId":"Vegetable" },
                     { "x": 7, "y": 9, "tileId":"Milk" }
-
                 ]
             },
         
@@ -629,10 +623,8 @@
                     { "x": 5, "y": 9, "tileId":"Milk" },
                     { "x": 6, "y": 9, "tileId":"Coconut" },
                     { "x": 7, "y": 9, "tileId":"Apple" }
-
                 ]
             },
-        
             {
                 "level": 8,            
                 "scoreTarget": 6500,            
@@ -719,7 +711,6 @@
                     { "x": 5, "y": 9, "tileId":"Apple" },
                     { "x": 6, "y": 9, "tileId":"Bread" },
                     { "x": 7, "y": 9, "tileId":"Orange" }
-
                 ]
             },
         
@@ -809,7 +800,6 @@
                     { "x": 5, "y": 9, "tileId":"Vegetable" },
                     { "x": 6, "y": 9, "tileId":"Milk" },
                     { "x": 7, "y": 9, "tileId":"Coconut" }
-
                 ]
             },
         
@@ -899,7 +889,6 @@
                     { "x": 5, "y": 9, "tileId":"Coconut" },
                     { "x": 6, "y": 9, "tileId":"Bread" },
                     { "x": 7, "y": 9, "tileId":"Coconut" }
-
                 ]
             }
         ]
