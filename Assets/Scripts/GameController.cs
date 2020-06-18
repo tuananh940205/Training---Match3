@@ -36,14 +36,15 @@ public class GameController : MonoBehaviour
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f - 1.7f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
-    [SerializeField] private List<Sprite> sprites;
+    // [SerializeField] private List<Sprite> sprites;
     private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
-    [SerializeField] private List<TileName> tileNames;
+    // [SerializeField] private List<TileName> tileNames;
     private Dictionary <string, TileController[,]> tileBoardDictionary;
     public Data data;
-    private string jsonData;
     private Dictionary <int, TileName> intTileNameDict = new Dictionary<int, TileName>();
     private int[] tileIntNumberList;
+    private BoardData[] boardDatas;
+    TilePointData tilePointData;
     private int level;
     
     void Awake()
@@ -67,7 +68,7 @@ public class GameController : MonoBehaviour
         gameOverUI.SetActive(false);
         
         AddEvent();
-        AddDict();
+        // AddDict();
 
         CreateBoard();
         DetectMatchExist();
@@ -85,7 +86,8 @@ public class GameController : MonoBehaviour
         levelText.text = "Level " + (level + 1);
         SetDictionaryData();
 
-        TextAsset asset = Resources.Load("LevelConfig") as TextAsset;
+        TextAsset asset = Resources.Load("JsonData/LevelConfig") as TextAsset;
+        TextAsset asset2 = Resources.Load("JsonData/TilePointConfig") as TextAsset;
         
         if (asset != null)
         {
@@ -94,7 +96,9 @@ public class GameController : MonoBehaviour
             SetLevelValue(level);
         }
         else
+        {
             Debug.Log("Asset is null");
+        }
     }
 
     void SetLevelValue(int levelGame)
@@ -103,26 +107,27 @@ public class GameController : MonoBehaviour
         score = 0;
         scoreTarget = data.items.levels[levelGame].scoreTarget;
         counter = data.items.levels[levelGame].counter;
-        // tileIntNumberList = data.items.levels[levelGame].board;
+        // tileIntNumberList = data.items.levels[levelGame].boards;
         Debug.LogFormat("score = {0}, scoreTarget = {1}, counter = {2}", score, scoreTarget, counter);
         scoreRequireText.text = "Target Score: " + scoreTarget.ToString();
         scoreText.text = "Score: " + score.ToString();
         counterText.text = counter.ToString();
-        
+        levelText.text = "Level " + (level + 1);
     }
 
-    void ResetBoard(int level, int[] intArray)
+    void ResetBoard(int level)
     {
-        boardControllerObject.ResetBoard(level, intArray);
+        // boardControllerObject.ResetBoard(level, intArray);
+        boardControllerObject.ResetBoard(level);
         
     }
 
     void SetDictionaryData()
     {
-        for (int i = 0; i < sprites.Count; i++)
-        {
-            intTileNameDict.Add(i, (TileName)i);
-        }
+        // for (int i = 0; i < sprites.Count; i++)
+        // {
+        //     intTileNameDict.Add(i, (TileName)i);
+        // }
     }
     void AddEvent()
     {
@@ -138,18 +143,20 @@ public class GameController : MonoBehaviour
     }
 
 
-    void AddDict()
-    {
-        for(int i = 0; i < sprites.Count; i++)
-            spriteDict.Add(tileNames[i], sprites[i]);
-    }
+    // void AddDict()
+    // {
+    //     for(int i = 0; i < sprites.Count; i++)
+    //         spriteDict.Add(tileNames[i], sprites[i]);
+    // }
 
     private void CreateBoard()
     {
         //boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict);
-        boardControllerObject.CreateBoardByLevelInfo(
-            rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict, intTileNameDict, tileIntNumberList
-            );
+        // boardControllerObject.CreateBoardByLevelInfo(
+        //     rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict, intTileNameDict, tileIntNumberList
+        //     );
+        boardControllerObject.CreateBoardWithIndexAndString(rowLength, columnLength, startPosition, offset, tile, spriteDict, intTileNameDict, tileIntNumberList, data);
+        
     }
 
     private void OnMouseUpHandler(Vector2 pos1, Vector2 pos2)
@@ -660,9 +667,7 @@ public class GameController : MonoBehaviour
         Debug.LogFormat("Generate new level {0}", level);
         boardControllerObject.GenerateNewLevelBoard(level);
         SetLevelValue(level);
-        ResetBoard(level, tileIntNumberList);
-        levelText.text = "Level " + (level + 1);
-
+        ResetBoard(level);
         
     }
 }

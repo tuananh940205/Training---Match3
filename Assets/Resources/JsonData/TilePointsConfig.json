@@ -1,0 +1,12 @@
+{
+    "items":
+    {
+        "milkPoint": 35,
+        "applePoint": 40,
+        "orangePoint": 45,
+        "breadPoint": 50,
+        "vegetablePoint": 55,
+        "coconutPoint": 60,
+        "flowerPoint": 65
+    }
+}

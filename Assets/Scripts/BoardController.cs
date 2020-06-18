@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
- 
+using System;
+
 public class BoardController : MonoBehaviour
 {
     public TileController[,] tiles { get; private set; }
@@ -19,6 +20,8 @@ public class BoardController : MonoBehaviour
     private Dictionary<int, TileName> intTileDict;
     private int[] intTileArray;
     private int levelBoard;
+    private Data data;
+    private TilePointData tilePointData;
 
     void Update()
     {
@@ -35,7 +38,7 @@ public class BoardController : MonoBehaviour
     }
 
     // Create board
-    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, List<TileName> _tileNames, Dictionary<TileName, Sprite> _spriteDict)
+    public void CreateBoard(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, List<TileName> _tileNames, Dictionary<TileName, Sprite> _spriteDict, Data _data)
     {
         spriteDict = _spriteDict;
         row = _row;
@@ -45,6 +48,7 @@ public class BoardController : MonoBehaviour
         tiles = new TileController[row, column];
         tile = _tile;
         tileNames = _tileNames;
+        BoardData[] boardData = data.items.levels[0].boards;
 
         // tile = Resources.Load()
         for (int y = 0; y < column; y++)
@@ -64,7 +68,7 @@ public class BoardController : MonoBehaviour
                 if (y > 0)
                         listTileName.Remove(tiles[x, y - 1].tileName);
 
-                TileName tileName = listTileName[Random.Range(0, listTileName.Count)];
+                TileName tileName = listTileName[UnityEngine.Random.Range(0, listTileName.Count)];
                 // Debug.LogFormat("x = {0}, y = {1}, tilesNames count = {2}", x, y , listTileName.Count);
                 tiles[x, y].tileName = tileName;
                 newTile.name = tileName.ToString();
@@ -74,8 +78,9 @@ public class BoardController : MonoBehaviour
     }
 
     // Create board by level
-    public void CreateBoardByLevelInfo(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, List<TileName> _tileNames, Dictionary<TileName, Sprite> _spriteDict, Dictionary<int, TileName> intTileNameDict, int[] intTileArrays)
+    public void CreateBoardByLevelInfo(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, List<TileName> _tileNames, Dictionary<TileName, Sprite> _spriteDict, Dictionary<int, TileName> intTileNameDict, int[] intTileArrays, Data _data)
     {
+        data = _data;
         spriteDict = _spriteDict;
         row = _row;
         column = _column;
@@ -117,6 +122,44 @@ public class BoardController : MonoBehaviour
             }
         }
     }
+
+    public void CreateBoardWithIndexAndString(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, Dictionary<TileName, Sprite> _spriteDict, Dictionary<int, TileName> intTileNameDict, int[] intTileArrays, Data _data)
+    {
+        spriteDict = _spriteDict;
+        row = _row;
+        column = _column;
+        startPosition = _startPosition;
+        offset = _offset;
+        tiles = new TileController[row, column];
+        tile = _tile;
+        // tileNames = _tileNames;
+        intTileDict = intTileNameDict;
+        intTileArray = intTileArrays;
+        data = _data;
+
+        for (int y = 0; y < column; y++)
+        {
+            for (int x = 0; x < row; x++)
+            {
+                int posX = data.items.levels[0].boards[x + y * row].x;
+                int posY = data.items.levels[0].boards[x + y * row].y;
+                // Debug.Log(data.items.levels[0].boards[x * 8 + y].x);
+
+                GameObject newTile = Instantiate(tile, new Vector3(startPosition.x + (offset.x * posX), startPosition.y - (offset.y * posY), 0), tile.transform.rotation);
+                tiles[x, y] = newTile.GetComponent<TileController>();
+
+                // int soNguyenDaiDienChoTileTrongTuDien = ;
+                string tileNameLoaded = data.items.levels[0].boards[x + y * row].tileId;
+                TileName tileName = (TileName)Enum.Parse(typeof(TileName), tileNameLoaded);
+                
+
+                tiles[x, y].tileName = tileName;
+                // Get the sprite through index
+                tiles[x, y].SpriteRenderer.sprite = Resources.Load<Sprite>(data.items.levels[0].boards[x + y * row].tileId); //spriteDict[tileName];
+                newTile.name = tileName.ToString();
+            }
+        }
+    }
     
     private IEnumerator MoveTilesDown(TileController go, int indexX, int indexY, Vector2 startPosition, Vector2 offset, TileController[,] tilesArray)
     {
@@ -137,10 +180,10 @@ public class BoardController : MonoBehaviour
         }
         //List<GameObject> listmatch = gameControllerObject.FindMatchesPassively(go, indexX, indexY, tiles);
         //gameControllerObject.ClearAllPassiveMatches(listmatch, tilesArray);
- 
+
         DetectMatchExist(MatchableTiles());
     }
- 
+
     public List<TileController> MatchableTiles()
     {
         // Debug.LogFormat("Execute Find the match exist");
@@ -328,7 +371,7 @@ public class BoardController : MonoBehaviour
         {
             for (int x = 0; x < row; x++)
             {
-                TileName go = listSwapContainer[Random.Range(0, listSwapContainer.Count)];
+                TileName go = listSwapContainer[UnityEngine.Random.Range(0, listSwapContainer.Count)];
                 tiles[x, y].tileName = go;
                 tiles[x, y].SpriteRenderer.sprite = spriteDict[go];
                 listSwapContainer.Remove(go);
@@ -400,9 +443,15 @@ public class BoardController : MonoBehaviour
             {
                 //nullList[i].SpriteRenderer.sprite = listSprite[Random.Range(0, listSprite.Count)];
                 nullList[i].transform.position = new Vector2(nullList[i].transform.position.x, startPosition.y + (i + 1) * offsetPosition.y);
- 
-                nullList[i].tileName = tileNames[Random.Range(0, tileNames.Count)];
-                nullList[i].SpriteRenderer.sprite = spriteDict[nullList[i].tileName];
+
+                // nullList[i].tileName = tileNames[UnityEngine.Random.Range(0, tileNames.Count)];
+                
+                // nullList[i].SpriteRenderer.sprite = spriteDict[nullList[i].tileName];
+
+                string[] tileNameStringArray = new string[]{"Milk", "Apple", "Orange", "Bread", "Vegetable", "Coconut", "Flower" };
+                string tilenameString = tileNameStringArray[UnityEngine.Random.Range(0, tileNameStringArray.Length)];
+                nullList[i].tileName = (TileName)Enum.Parse(typeof(TileName), tilenameString);
+                nullList[i].SpriteRenderer.sprite = (Resources.Load<Sprite>(tilenameString));
             }
             listTotal.AddRange(nullList);
             
@@ -438,18 +487,20 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    public void ResetBoard(int level, int[] intArray)
+    public void ResetBoard(int levelGame)
     {
-        intTileArray = intArray;
+        Debug.LogFormat("New level {0}", levelGame);
         for (int y = 0; y < column; y++)
         {
             for (int x = 0; x < row; x++)
             {
-                int soNguyenDaiDienChoTileTrongTuDien = intTileArray[x + y * row];
-                TileName tileName = intTileDict[soNguyenDaiDienChoTileTrongTuDien];
+                // string tileNameLoaded = data.items.levels[levelGame].boards[x + y * row].tileId;
+                string tileNameLoaded = data.items.levels[levelGame].boards[x + y * row].tileId;
+                TileName tileName = (TileName)Enum.Parse(typeof(TileName), tileNameLoaded);
 
                 tiles[x, y].tileName = tileName;
-                tiles[x, y].SpriteRenderer.sprite = spriteDict[tileName];
+                Debug.LogFormat("tileSprite {0}, {1}, {2} ",x ,y ,data.items.levels[levelGame].boards[x + y * row].tileId);
+                tiles[x, y].SpriteRenderer.sprite = Resources.Load<Sprite>(data.items.levels[levelGame].boards[x + y * row].tileId);;
             }
         }
         DetectMatchExist(MatchableTiles());
