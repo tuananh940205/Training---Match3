@@ -11,14 +11,14 @@ public class TileController : MonoBehaviour
     public static OnMouseUpEvent onMouseUp;
     public delegate void OnMouseDownEvent(TileController tile);
     public static OnMouseDownEvent onMouseDown;
-    public TileName tileName { get; set; }
+    // public TileName tileName { get; set; }
     
     // Test
     [SerializeField] string a;
 
     void Update()
     {
-        a = tileName.ToString();
+        // a = tileName.ToString();
     }
     void Awake()
     {

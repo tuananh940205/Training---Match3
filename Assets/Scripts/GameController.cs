@@ -5,16 +5,6 @@ using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 
-public enum TileName
-{
-    Milk = 0,
-    Apple = 1,
-    Orange = 2,
-    Bread = 3,
-    Vegetable = 4,
-    Coconut = 5,
-    Flower = 6
-}
 
 public class GameController : MonoBehaviour
 {
@@ -31,21 +21,21 @@ public class GameController : MonoBehaviour
     private TileController secondTile = null;
     private Vector2 offset {get; set;}
     [SerializeField] private GameObject tile;
+    [SerializeField] private int level;
     private int rowLength = 8;
     private int columnLength = 10;
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f - 1.7f);
     private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
     // [SerializeField] private List<Sprite> sprites;
-    private Dictionary<TileName, Sprite> spriteDict = new Dictionary<TileName, Sprite>();
-    // [SerializeField] private List<TileName> tileNames;
-    private Dictionary <string, TileController[,]> tileBoardDictionary;
+    // private Dictionary<name, Sprite> spriteDict = new Dictionary<name, Sprite>();
+    // [SerializeField] private List<name> names;
+    // private Dictionary <string, TileController[,]> tileBoardDictionary;
     public Data data;
-    private Dictionary <int, TileName> intTileNameDict = new Dictionary<int, TileName>();
+    // private Dictionary <int, name> intnameDict = new Dictionary<int, name>();
     private int[] tileIntNumberList;
-    private BoardData[] boardDatas;
-    TilePointData tilePointData;
-    private int level;
+    [SerializeField] TilePointData tilePointData;
+    
     
     void Awake()
     {
@@ -59,7 +49,7 @@ public class GameController : MonoBehaviour
         offset = tile.GetComponent<SpriteRenderer>().bounds.size;
 
         // Test methods
-        //Debug.LogFormat("GetEnumTest: {0}", (int)TileName.Flower);
+        //Debug.LogFormat("GetEnumTest: {0}", (int)name.Flower);
     }
 
     void Start()
@@ -84,10 +74,10 @@ public class GameController : MonoBehaviour
     {
         level = 0;
         levelText.text = "Level " + (level + 1);
-        SetDictionaryData();
+        // SetDictionaryData();
 
         TextAsset asset = Resources.Load("JsonData/LevelConfig") as TextAsset;
-        TextAsset asset2 = Resources.Load("JsonData/TilePointConfig") as TextAsset;
+        TextAsset asset2 = Resources.Load("JsonData/TilePointsConfig") as TextAsset;
         
         if (asset != null)
         {
@@ -98,6 +88,15 @@ public class GameController : MonoBehaviour
         else
         {
             Debug.Log("Asset is null");
+        }
+
+        if (asset2 != null)
+        {
+            tilePointData = JsonUtility.FromJson<TilePointData>(asset2.text);
+        }
+        else
+        {
+            Debug.Log("Asset2 is null");
         }
     }
 
@@ -122,13 +121,13 @@ public class GameController : MonoBehaviour
         
     }
 
-    void SetDictionaryData()
-    {
-        // for (int i = 0; i < sprites.Count; i++)
-        // {
-        //     intTileNameDict.Add(i, (TileName)i);
-        // }
-    }
+    // void SetDictionaryData()
+    // {
+    //     for (int i = 0; i < sprites.Count; i++)
+    //     {
+    //         intnameDict.Add(i, (name)i);
+    //     }
+    // }
     void AddEvent()
     {
         TileController.onMouseUp += OnMouseUpHandler;
@@ -146,16 +145,16 @@ public class GameController : MonoBehaviour
     // void AddDict()
     // {
     //     for(int i = 0; i < sprites.Count; i++)
-    //         spriteDict.Add(tileNames[i], sprites[i]);
+    //         spriteDict.Add(names[i], sprites[i]);
     // }
 
     private void CreateBoard()
     {
-        //boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict);
+        //boardControllerObject.CreateBoard(rowLength, columnLength, startPosition, offset, tile, names, spriteDict);
         // boardControllerObject.CreateBoardByLevelInfo(
-        //     rowLength, columnLength, startPosition, offset, tile, tileNames, spriteDict, intTileNameDict, tileIntNumberList
+        //     rowLength, columnLength, startPosition, offset, tile, names, spriteDict, intnameDict, tileIntNumberList
         //     );
-        boardControllerObject.CreateBoardWithIndexAndString(rowLength, columnLength, startPosition, offset, tile, spriteDict, intTileNameDict, tileIntNumberList, data);
+        boardControllerObject.CreateBoardWithIndexAndString(rowLength, columnLength, startPosition, offset, tile, tileIntNumberList, data, tilePointData);
         
     }
 
@@ -171,36 +170,54 @@ public class GameController : MonoBehaviour
         firstTile = tile;
     }
 
-    void ResetColorAndFillBoard(List<TileController> tilesList, int value)
-    {
-        if (value == 0)
-        {
-            foreach (var tile in tilesList)
-            {
-                tile.gameObject.SetActive(false);
-                tile.SpriteRenderer.color = new Color (1, 1, 1, 1);
-                OnScoreChanged();
-            }
-            firstTile = null;
-            secondTile = null;
-            boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
-        }
-    }
+    //void ResetColorAndFillBoard(List<TileController> tilesList, int value)
+    //{
+    //    if (value == 0)
+    //    {
+    //        foreach (var tile in tilesList)
+    //        {
+    //            tile.gameObject.SetActive(false);
+    //            tile.SpriteRenderer.color = new Color (1, 1, 1, 1);
+    //            OnScoreChanged();
+    //        }
+    //        firstTile = null;
+    //        secondTile = null;
+    //        boardControllerObject.OnBoardFilled(startPosition, offset, coroutineMap);
+    //    }
+    //}
 
     public IEnumerator AllTilesFadeOut(List<TileController> tiles)
     {
         for (int i = 10; i > 0; i--)
         {
             foreach (var tile in tiles)
+            {
                 tile.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, i * .1f);
-
+            }
             yield return new WaitForSeconds(.05f);
         }
         foreach (var tile in tiles)
         {
             tile.gameObject.SetActive(false);
             tile.SpriteRenderer.color = new Color(1, 1, 1, 1);
-            OnScoreChanged();
+            string s = tile.SpriteRenderer.sprite.name;
+            int temp = 0;
+            
+            for (int i = 0; i < tilePointData.items.tileProperties.Count; i++)
+            {
+                if (s == tilePointData.items.tileProperties[i].id)
+                {
+                    temp = tilePointData.items.tileProperties[i].score;
+                    break;
+                }
+            }
+
+            Debug.LogFormat("string = {0}, int = {1}", s, temp);
+            if (temp != 0)
+            {
+                OnScoreChanged(temp);
+            }
+                
         }
         firstTile = null;
         secondTile = null;
@@ -226,9 +243,9 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void OnScoreChanged()
+    private void OnScoreChanged(int tileScore)
     {
-        score += 50;
+        score += tileScore;
         scoreText.text = "Score: " + score.ToString();
     }
 
@@ -249,7 +266,9 @@ public class GameController : MonoBehaviour
                             foreach (var tile in FindMatchesPassivelyHandler(tilesList[x, y], x, y, tilesList))
                             {
                                 if (!passivelyClearTileList.Contains(tile))
+                                {
                                     passivelyClearTileList.Add(tile);
+                                }
                             }
                         }
                     }
@@ -258,35 +277,38 @@ public class GameController : MonoBehaviour
         }
         // Debug.LogFormat("ClearAllPassiveMatchesHandler Count = {0}", passivelyClearTileList.Count);
         if (passivelyClearTileList.Count > 0)
+        {
             StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
+        }
+            
     }
 
-    public void ClearAllPassiveMatches(List<TileController> listGO, TileController[,] tilesList)
-    {
-        List<TileController> passivelyClearTileList = new List<TileController>();
-        foreach(var go in listGO)
-        {
-            for(int x = 0; x < tilesList.GetLength(0); x++)
-            {
-                for (int y = tilesList.GetLength(1) - 1; y >= 0; y--)
-                {
-                    if (tilesList[x, y] == go)
-                    {
-                        if (!passivelyClearTileList.Contains(tilesList[x, y]))
-                        {
-                            foreach(var tile in FindMatchesPassivelyHandler(tilesList[x, y], x, y, tilesList))
-                            {
-                                if (!passivelyClearTileList.Contains(tile))
-                                    passivelyClearTileList.Add(tile);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (passivelyClearTileList.Count > 0)
-            StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
-    }
+    //public void ClearAllPassiveMatches(List<TileController> listGO, TileController[,] tilesList)
+    //{
+    //    List<TileController> passivelyClearTileList = new List<TileController>();
+    //    foreach(var go in listGO)
+    //    {
+    //        for(int x = 0; x < tilesList.GetLength(0); x++)
+    //        {
+    //            for (int y = tilesList.GetLength(1) - 1; y >= 0; y--)
+    //            {
+    //                if (tilesList[x, y] == go)
+    //                {
+    //                    if (!passivelyClearTileList.Contains(tilesList[x, y]))
+    //                    {
+    //                        foreach(var tile in FindMatchesPassivelyHandler(tilesList[x, y], x, y, tilesList))
+    //                        {
+    //                            if (!passivelyClearTileList.Contains(tile))
+    //                                passivelyClearTileList.Add(tile);
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //    if (passivelyClearTileList.Count > 0)
+    //        StartCoroutine(AllTilesFadeOut(passivelyClearTileList));
+    //}
 
     private List<TileController> FindMatchesPassivelyHandler(TileController tile, int IndexX, int IndexY, TileController[,] tilesArray)
     {
@@ -297,7 +319,7 @@ public class GameController : MonoBehaviour
         // Scanning up
         for (int i = 1; i <= IndexY; i++)
         {
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX, IndexY - i].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX, IndexY - i].name)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY - i].name, IndexX, IndexY - 1);
                 checkingMatchListVertical.Add(tilesArray[IndexX, IndexY - i]);
@@ -308,7 +330,7 @@ public class GameController : MonoBehaviour
         //scanning down
         for (int i = 1; i < tilesArray.GetLength(1) - IndexY; i++)
         {
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX, IndexY + i].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX, IndexY + i].name)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY + i].name, IndexX, IndexY + 1);
                 checkingMatchListVertical.Add(tilesArray[IndexX, IndexY + i]);
@@ -321,7 +343,7 @@ public class GameController : MonoBehaviour
         // SCANNING LEFT
         for (int i = 1; i <= IndexX; i++)
         {
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX - i, IndexY].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX - i, IndexY].name)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX - i, IndexY].name, IndexX - i, IndexY);
                 checkingMatchListHorizontal.Add(tilesArray[IndexX - i, IndexY]);
@@ -332,7 +354,7 @@ public class GameController : MonoBehaviour
         // SCANNING RIGHT
         for (int i = 1; i < tilesArray.GetLength(0) - IndexX; i++)
         {
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX + i, IndexY].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX + i, IndexY].name)
             {
                 //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", BoardController.instance.tiles[IndexX + i, IndexY].name, IndexX + i, IndexY);
                 checkingMatchListHorizontal.Add(tilesArray[IndexX + i, IndexY]);
@@ -349,66 +371,66 @@ public class GameController : MonoBehaviour
         return totalList;
     }
 
-    public List<GameObject> FindMatchesPassively(GameObject go, int IndexX, int IndexY, TileController[,] tilesList)
-    {
-        //Debug.LogFormat("Execute FindMatchPassiveLy");
-        List<GameObject> checkingMatchListVertical = new List<GameObject>();
-        List<GameObject> checkingMatchListHorizontal = new List<GameObject>();
-        List<GameObject> totalList = new List<GameObject>();
-        // Scanning up
-        for (int i = 1; i <= IndexY; i++)
-        {
-            if (tilesList[IndexX, IndexY].tileName == tilesList[IndexX, IndexY - i].tileName)
-            {
-                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY - i].name, IndexX, IndexY - 1);
-                checkingMatchListVertical.Add(tilesList[IndexX, IndexY - i].gameObject);
-            }
-            else
-                break;
-        }
-        //scanning down
-        for (int i = 1; i < tilesList.GetLength(1) - IndexY; i++)
-        {
-            if (tilesList[IndexX, IndexY].tileName == tilesList[IndexX, IndexY + i].tileName)
-            {
-                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY + i].name, IndexX, IndexY + 1);
-                checkingMatchListVertical.Add(tilesList[IndexX, IndexY + i].gameObject);
-            }
-            else
-                break;
-        }
-        if (checkingMatchListVertical.Count >= 2)
-            totalList.AddRange(checkingMatchListVertical);
-        // SCANNING LEFT
-        for (int i = 1; i <= IndexX; i++)
-        {
-            if (tilesList[IndexX, IndexY].tileName == tilesList[IndexX - i, IndexY].tileName)
-            {
-                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX - i, IndexY].name, IndexX - i, IndexY);
-                checkingMatchListHorizontal.Add(tilesList[IndexX - i, IndexY].gameObject);
-            }
-            else
-                break;
-        }
-        // SCANNING RIGHT
-        for (int i = 1; i < tilesList.GetLength(0) - IndexX; i++)
-        {
-            if (tilesList[IndexX, IndexY].tileName == tilesList[IndexX + i, IndexY].tileName)
-            {
-                //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", BoardController.instance.tiles[IndexX + i, IndexY].name, IndexX + i, IndexY);
-                checkingMatchListHorizontal.Add(tilesList[IndexX + i, IndexY].gameObject);
-            }
-            else
-                break;
-        }
-        if (checkingMatchListHorizontal.Count >= 2)
-            totalList.AddRange(checkingMatchListHorizontal);
+    //public List<GameObject> FindMatchesPassively(GameObject go, int IndexX, int IndexY, TileController[,] tilesList)
+    //{
+    //    //Debug.LogFormat("Execute FindMatchPassiveLy");
+    //    List<GameObject> checkingMatchListVertical = new List<GameObject>();
+    //    List<GameObject> checkingMatchListHorizontal = new List<GameObject>();
+    //    List<GameObject> totalList = new List<GameObject>();
+    //    // Scanning up
+    //    for (int i = 1; i <= IndexY; i++)
+    //    {
+    //        if (tilesList[IndexX, IndexY].name == tilesList[IndexX, IndexY - i].name)
+    //        {
+    //            //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY - i].name, IndexX, IndexY - 1);
+    //            checkingMatchListVertical.Add(tilesList[IndexX, IndexY - i].gameObject);
+    //        }
+    //        else
+    //            break;
+    //    }
+    //    //scanning down
+    //    for (int i = 1; i < tilesList.GetLength(1) - IndexY; i++)
+    //    {
+    //        if (tilesList[IndexX, IndexY].name == tilesList[IndexX, IndexY + i].name)
+    //        {
+    //            //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX, IndexY + i].name, IndexX, IndexY + 1);
+    //            checkingMatchListVertical.Add(tilesList[IndexX, IndexY + i].gameObject);
+    //        }
+    //        else
+    //            break;
+    //    }
+    //    if (checkingMatchListVertical.Count >= 2)
+    //        totalList.AddRange(checkingMatchListVertical);
+    //    // SCANNING LEFT
+    //    for (int i = 1; i <= IndexX; i++)
+    //    {
+    //        if (tilesList[IndexX, IndexY].name == tilesList[IndexX - i, IndexY].name)
+    //        {
+    //            //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", tiles[IndexX - i, IndexY].name, IndexX - i, IndexY);
+    //            checkingMatchListHorizontal.Add(tilesList[IndexX - i, IndexY].gameObject);
+    //        }
+    //        else
+    //            break;
+    //    }
+    //    // SCANNING RIGHT
+    //    for (int i = 1; i < tilesList.GetLength(0) - IndexX; i++)
+    //    {
+    //        if (tilesList[IndexX, IndexY].name == tilesList[IndexX + i, IndexY].name)
+    //        {
+    //            //Debug.LogFormat("gameObject {0} tiles [{1}, {2}]", BoardController.instance.tiles[IndexX + i, IndexY].name, IndexX + i, IndexY);
+    //            checkingMatchListHorizontal.Add(tilesList[IndexX + i, IndexY].gameObject);
+    //        }
+    //        else
+    //            break;
+    //    }
+    //    if (checkingMatchListHorizontal.Count >= 2)
+    //        totalList.AddRange(checkingMatchListHorizontal);
 
-        if (totalList.Count >= 2)
-            totalList.Add(go);
+    //    if (totalList.Count >= 2)
+    //        totalList.Add(go);
 
-        return totalList;
-    }
+    //    return totalList;
+    //}
 
     
     public bool GetTheAdjacentTile(float radiant, int xIndex, int yIndex, TileController[,] tilesList)
@@ -480,8 +502,8 @@ public class GameController : MonoBehaviour
                 {
                     tilesList[temp3, temp4] = tile1;
                     tilesList[temp1, temp2] = tile2;
-                    tilesList[temp1, temp2].gameObject.name = "Swap [ " + temp1 + ", " + temp2 + " ]";
-                    tilesList[temp3, temp4].gameObject.name = "Swap [ " + temp3 + ", " + temp4 + " ]";
+                    // tilesList[temp1, temp2].name = "Swap [ " + temp1 + ", " + temp2 + " ]";
+                    // tilesList[temp3, temp4].name = "Swap [ " + temp3 + ", " + temp4 + " ]";
                     break;
                 }
             }
@@ -532,9 +554,9 @@ public class GameController : MonoBehaviour
                 if (temp1 > -1 && temp2 > -1 && temp3 > -1 && temp4 > -1)
                 {
                     tilesList[temp1, temp2] = tile2;
-                    tilesList[temp1, temp2].gameObject.name = "SwapBack [ " + temp1 + ", " + temp2 + " ]";
+                    // tilesList[temp1, temp2].name = "SwapBack [ " + temp1 + ", " + temp2 + " ]";
                     tilesList[temp3, temp4] = tile1;
-                    tilesList[temp3, temp4].gameObject.name = "SwapBack [ " + temp3 + ", " + temp4 + " ]";
+                    // tilesList[temp3, temp4].name = "SwapBack [ " + temp3 + ", " + temp4 + " ]";
 
                     break;
                 }
@@ -575,7 +597,7 @@ public class GameController : MonoBehaviour
         // Debug.LogFormat("Step 1");
         for (int i = 1; i <= IndexY; i++)
         {
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX, IndexY - i].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX, IndexY - i].name)
                 checkingMatchListVertical.Add(tilesArray[IndexX, IndexY - i]);
             else
                 break;
@@ -588,10 +610,15 @@ public class GameController : MonoBehaviour
             // Debug.LogFormat("Step 2.1");
             // Debug.LogFormat("tilesList.GetLength(1) = {0}, indexY = {1}", tilesList.GetLength(1), IndexY);
 
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX, IndexY + i].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX, IndexY + i].name)
+            {
                 checkingMatchListVertical.Add(tilesArray[IndexX, IndexY + i]);
+            }
             else
+            {
                 break;
+            }
+                
         }
         // Debug.LogFormat("Step 3");
         if (checkingMatchListVertical.Count >= 2)
@@ -599,7 +626,7 @@ public class GameController : MonoBehaviour
         // SCANNING LEFT
         for (int i = 1; i <= IndexX; i++)
         {
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX - i, IndexY].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX - i, IndexY].name)
                 checkingMatchListHorizontal.Add(tilesArray[IndexX - i, IndexY]);
             else
                 break;
@@ -608,7 +635,7 @@ public class GameController : MonoBehaviour
         // SCANNING RIGHT
         for (int i = 1; i < tilesArray.GetLength(0) - IndexX; i++)
         {
-            if (tilesArray[IndexX, IndexY].tileName == tilesArray[IndexX + i, IndexY].tileName)
+            if (tilesArray[IndexX, IndexY].name == tilesArray[IndexX + i, IndexY].name)
             {
                 checkingMatchListHorizontal.Add(tilesArray[IndexX + i, IndexY]);
             }

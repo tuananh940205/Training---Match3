@@ -1,12 +1,43 @@
 {
     "items":
     {
-        "milkPoint": 35,
-        "applePoint": 40,
-        "orangePoint": 45,
-        "breadPoint": 50,
-        "vegetablePoint": 55,
-        "coconutPoint": 60,
-        "flowerPoint": 65
+        "tileProperties":
+        [
+            {
+                "id": "Milk",
+                "score": 35,
+                "spriteName": "sprite_milk"
+            },
+            {
+                "id": "Apple",
+                "score": 40,
+                "spriteName": "sprite_apple"
+            },
+            {
+                "id": "Orange",
+                "score": 45,
+                "spriteName": "sprite_orange"
+            },
+            {
+                "id": "Bread",
+                "score": 50,
+                "spriteName": "sprite_bread"
+            },
+            {
+                "id": "Vegetable",
+                "score": 55,
+                "spriteName": "sprite_vegetable"
+            },
+            {
+                "id": "Coconut",
+                "score": 60,
+                "spriteName": "sprite_coconut"
+            },
+            {
+                "id": "Flower",
+                "score": 65,
+                "spriteName": "sprite_flower"
+            }
+        ]
     }
 }
