@@ -504,8 +504,8 @@ public class BoardController : MonoBehaviour
                 // name name = (name)Enum.Parse(typeof(name), nameLoaded);
 
                 // tiles[x, y].name = name;
-                Debug.LogFormat("tileSprite {0}, {1}, {2} ",x ,y ,data.items.levels[levelGame].boards[x + y * row].tileId);
-                tiles[x, y].SpriteRenderer.sprite = Resources.Load<Sprite>(data.items.levels[levelGame].boards[x + y * row].tileId);;
+                // Debug.LogFormat("tileSprite {0}, {1}, {2} ",x ,y ,data.items.levels[levelGame].boards[x + y * row].tileId);
+                tiles[x, y].SpriteRenderer.sprite = Resources.Load<Sprite>(data.items.levels[levelGame].boards[x + y * row].tileId);
             }
         }
         DetectMatchExist(MatchableTiles());

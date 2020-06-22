@@ -102,12 +102,12 @@ public class GameController : MonoBehaviour
 
     void SetLevelValue(int levelGame)
     {
-        Debug.LogFormat("Execute SetLevelValue");
+        // Debug.LogFormat("Execute SetLevelValue");
         score = 0;
         scoreTarget = data.items.levels[levelGame].scoreTarget;
         counter = data.items.levels[levelGame].counter;
         // tileIntNumberList = data.items.levels[levelGame].boards;
-        Debug.LogFormat("score = {0}, scoreTarget = {1}, counter = {2}", score, scoreTarget, counter);
+        // Debug.LogFormat("score = {0}, scoreTarget = {1}, counter = {2}", score, scoreTarget, counter);
         scoreRequireText.text = "Target Score: " + scoreTarget.ToString();
         scoreText.text = "Score: " + score.ToString();
         counterText.text = counter.ToString();
