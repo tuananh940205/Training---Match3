@@ -25,7 +25,7 @@ public class GameController : MonoBehaviour
     private int rowLength = 8;
     private int columnLength = 10;
     private Vector2 startPosition = new Vector2(-2.61f, 3.5f - 1.7f);
-    private Dictionary<string, Coroutine> coroutineMap = new Dictionary<string, Coroutine>();
+    private Dictionary<TileController, Coroutine> coroutineMap = new Dictionary<TileController, Coroutine>();
     [SerializeField] private BoardController boardControllerObject;
     // [SerializeField] private List<Sprite> sprites;
     // private Dictionary<name, Sprite> spriteDict = new Dictionary<name, Sprite>();
@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour
     // private Dictionary <string, TileController[,]> tileBoardDictionary;
     public Data data;
     // private Dictionary <int, name> intnameDict = new Dictionary<int, name>();
-    private int[] tileIntNumberList;
+    //private int[] tileIntNumberList;
     [SerializeField] TilePointData tilePointData;
     
     
@@ -154,7 +154,7 @@ public class GameController : MonoBehaviour
         // boardControllerObject.CreateBoardByLevelInfo(
         //     rowLength, columnLength, startPosition, offset, tile, names, spriteDict, intnameDict, tileIntNumberList
         //     );
-        boardControllerObject.CreateBoardWithIndexAndString(rowLength, columnLength, startPosition, offset, tile, tileIntNumberList, data, tilePointData);
+        boardControllerObject.CreateBoardWithIndexAndString(rowLength, columnLength, startPosition, offset, tile, data, tilePointData);
         
     }
 
@@ -202,17 +202,20 @@ public class GameController : MonoBehaviour
             tile.SpriteRenderer.color = new Color(1, 1, 1, 1);
             string s = tile.SpriteRenderer.sprite.name;
             int temp = 0;
-            
-            for (int i = 0; i < tilePointData.items.tileProperties.Count; i++)
-            {
-                if (s == tilePointData.items.tileProperties[i].id)
-                {
-                    temp = tilePointData.items.tileProperties[i].score;
-                    break;
-                }
-            }
 
-            Debug.LogFormat("string = {0}, int = {1}", s, temp);
+            TileDetails tileData = tilePointData.items.tileProperties.Find(x => x.id == s);
+            temp = tileData.score;
+            
+            // for (int i = 0; i < tilePointData.items.tileProperties.Count; i++)
+            // {
+            //     if (s == tilePointData.items.tileProperties[i].id)
+            //     {
+            //         temp = tilePointData.items.tileProperties[i].score;
+            //         break;
+            //     }
+            // }
+
+            // Debug.LogFormat("string = {0}, int = {1}", s, temp);
             if (temp != 0)
             {
                 OnScoreChanged(temp);
@@ -698,3 +701,4 @@ public class GameController : MonoBehaviour
         
     }
 }
+

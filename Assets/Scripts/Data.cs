@@ -32,12 +32,16 @@ public class BoardData
     public string tileId;
 }
 
+/// <summary>
+/// 
+/// </summary>
+
 [Serializable]
 public class TileData
 {
     public string id;
-    public string spriteName;
     public string score;
+    public string spriteName;
 }
 
 [Serializable]
@@ -58,4 +62,9 @@ public class TileDetails
     public string id;
     public int score;
     public string spriteName;
+}
+class Person
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
 }

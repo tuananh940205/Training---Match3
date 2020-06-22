@@ -124,7 +124,7 @@ public class BoardController : MonoBehaviour
     //     }
     // }
 
-    public void CreateBoardWithIndexAndString(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, int[] intTileArrays, Data _data, TilePointData _tilePointData)
+    public void CreateBoardWithIndexAndString(int _row, int _column, Vector2 _startPosition, Vector2 _offset, GameObject _tile, Data _data, TilePointData _tilePointData)
     {
         // spriteDict = _spriteDict;
         row = _row;
@@ -135,7 +135,7 @@ public class BoardController : MonoBehaviour
         tile = _tile;
         // names = _names;
         // intTileDict = intnameDict;
-        intTileArray = intTileArrays;
+        //intTileArray = intTileArrays;
         data = _data;
         tilePointData = _tilePointData;
 
@@ -153,7 +153,8 @@ public class BoardController : MonoBehaviour
                 string nameLoaded = data.items.levels[0].boards[x + y * row].tileId;
                 tiles[x, y].name = nameLoaded;
                 TileDetails tileData = tilePointData.items.tileProperties.Find( e => e.id == nameLoaded);
-                tiles[x, y].SpriteRenderer.sprite = Resources.Load<Sprite>(tileData.spriteName);
+                // Debug.LogFormat("tileData: {0}", tileData.id);
+                tiles[x, y].SpriteRenderer.sprite = Resources.Load<Sprite>(tileData.id);
                 // Get the sprite through index
                 newTile.name  = tileData.spriteName;
 
@@ -407,14 +408,16 @@ public class BoardController : MonoBehaviour
     }
     
     // Fill board
-    public void OnBoardFilled(Vector2 startPosition, Vector2 offsetPosition, Dictionary<string, Coroutine> coroutineMap)
+    public void OnBoardFilled(Vector2 startPosition, Vector2 offsetPosition, Dictionary<TileController, Coroutine> coroutineMap)
     {
         for (int y = 0; y < column; y++)
         {
             for (int x = 0; x < row; x++)
             {
                 if (tiles[x, y].SpriteRenderer.color != new Color (1, 1, 1, 1))
+                {
                     tiles[x, y].SpriteRenderer.color = new Color (1, 1, 1, 1);
+                }
             }
         }
 
@@ -448,10 +451,11 @@ public class BoardController : MonoBehaviour
                 // nullList[i].name = names[UnityEngine.Random.Range(0, names.Count)];
                 
                 // nullList[i].SpriteRenderer.sprite = spriteDict[nullList[i].name];
-
-                string[] nameStringArray = new string[]{"Milk", "Apple", "Orange", "Bread", "Vegetable", "Coconut", "Flower" };
-                string nameString = nameStringArray[UnityEngine.Random.Range(0, nameStringArray.Length)];
+                
+                string nameString = tilePointData.items.tileProperties[UnityEngine.Random.Range(0, tilePointData.items.tileProperties.Count)].id;
                 // nullList[i].name = (name)Enum.Parse(typeof(name), nameString);
+                TileDetails tileData = tilePointData.items.tileProperties.Find(e => e.id == nameString);
+                nullList[i].name = tileData.spriteName;
                 nullList[i].SpriteRenderer.sprite = (Resources.Load<Sprite>(nameString));
             }
             listTotal.AddRange(nullList);
@@ -459,17 +463,17 @@ public class BoardController : MonoBehaviour
             for (int i = 0; i < listTotal.Count; i++)
             {
                 tiles[x, i] = listTotal[listTotal.Count - 1 - i];
-                tiles[x, i].name = "New [ " + x + ", " + i + " ]";
+                // tiles[x, i].name = "New [ " + x + ", " + i + " ]";
             }
             
             for (int i = 0; i < listTotal.Count; i++)
             {
-                if (coroutineMap.ContainsKey(tiles[x, i].name))
+                if (coroutineMap.ContainsKey(tiles[x, i]))
                 {
-                    StopCoroutine(coroutineMap[tiles[x, i].name]);
-                    coroutineMap.Remove(tiles[x, i].name);
+                    StopCoroutine(coroutineMap[tiles[x, i]]);
+                    coroutineMap.Remove(tiles[x, i]);
                 }
-                coroutineMap[tiles[x, i].name] = StartCoroutine(MoveTilesDown(tiles[x, i], x, i, startPosition, offsetPosition, tiles));
+                coroutineMap[tiles[x, i]] = StartCoroutine(MoveTilesDown(tiles[x, i], x, i, startPosition, offsetPosition, tiles));
             }
         }
     }
